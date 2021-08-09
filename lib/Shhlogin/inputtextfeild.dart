@@ -1,4 +1,6 @@
+import 'package:docker_app/ssh/sshlogin.dart';
 import 'package:flutter/material.dart';
+import 'package:ssh2/ssh2.dart';
 
 class InputTextField extends StatelessWidget {
   @override
@@ -10,8 +12,9 @@ class InputTextField extends StatelessWidget {
           child: Column(
             children: [
               TextField(
+                onChanged: (value) {},
                 decoration: InputDecoration(
-                  hintText: "Name",
+                  labelText: "Name",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -21,8 +24,11 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextField(
+                onChanged: (value) {
+                  sshshare(host: value);
+                },
                 decoration: InputDecoration(
-                  hintText: "Host",
+                  labelText: "Host",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -32,9 +38,13 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextField(
-                autofillHints: ["22"],
+                textAlign: TextAlign.right,
+                onChanged: (value) {
+                  sshshare(port: value);
+                },
                 decoration: InputDecoration(
-                  hintText: "Port",
+                  counterText: "22",
+                  labelText: "Port",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -44,9 +54,11 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextField(
-                autofillHints: ["22"],
+                onChanged: (value) {
+                  sshshare(username: value);
+                },
                 decoration: InputDecoration(
-                  hintText: "Username",
+                  labelText: "Username",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -56,9 +68,11 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextField(
-                autofillHints: ["22"],
+                onChanged: (value) {
+                  sshshare(password: value);
+                },
                 decoration: InputDecoration(
-                  hintText: "Password",
+                  labelText: "Password",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),

@@ -1,3 +1,4 @@
+import 'package:docker_app/ssh/sshlogin.dart';
 import 'package:flutter/material.dart';
 
 class ShhBottomButton extends StatelessWidget {
@@ -21,7 +22,7 @@ class ShhBottomButton extends StatelessWidget {
             left: 90.0,
           ),
           child: ElevatedButton(
-            onPressed: null,
+            onPressed: sshconnect,
             child: Text("Connect"),
           ),
         ),
