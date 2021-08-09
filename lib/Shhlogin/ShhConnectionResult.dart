@@ -10,7 +10,7 @@ class ShhLoginConnection extends StatelessWidget {
           height: 25.0,
           width: 200.0,
           child: Text(
-            "Test Succesful",
+            "Test Succesful..",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
