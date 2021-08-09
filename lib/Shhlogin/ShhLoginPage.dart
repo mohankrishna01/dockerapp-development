@@ -21,7 +21,10 @@ class ShhLoginPage extends StatelessWidget {
           ),
           InputTextField(),
           ShhBottomButton(),
-          ShhLoginConnection(),
+          SizedBox(
+            height: 20.0,
+          ),
+          //  ShhLoginConnection(),
         ],
       ),
     );

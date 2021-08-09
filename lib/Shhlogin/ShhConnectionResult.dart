@@ -11,12 +11,14 @@ class ShhLoginConnection extends StatelessWidget {
           width: 200.0,
           child: Text(
             "Test Succesful",
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
             ),
           ),
           decoration: BoxDecoration(
             color: Colors.green,
+            borderRadius: BorderRadius.circular(10.0),
           ),
         ),
       ],
