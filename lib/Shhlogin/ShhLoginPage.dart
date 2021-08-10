@@ -1,7 +1,7 @@
 import 'package:docker_app/Shhlogin/dockerimage.dart';
 import 'package:docker_app/Shhlogin/inputtextfeild.dart';
 import 'package:flutter/material.dart';
-import 'ShhBottombutton.dart';
+
 import 'headlinetext.dart';
 
 class ShhLoginPage extends StatelessWidget {
@@ -19,10 +19,7 @@ class ShhLoginPage extends StatelessWidget {
             height: 20.0,
           ),
           InputTextField(),
-          ShhBottomButton(),
-          SizedBox(
-            height: 20.0,
-          ),
+
           //  ShhLoginConnection(),
         ],
       ),
