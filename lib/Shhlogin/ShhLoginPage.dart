@@ -12,11 +12,11 @@ class ShhLoginPage extends StatelessWidget {
         children: [
           DockerImage(),
           SizedBox(
-            height: 15.0,
+            height: 20.0,
           ),
           HeadlineText(),
           SizedBox(
-            height: 20.0,
+            height: 25.0,
           ),
           InputTextField(),
         ],

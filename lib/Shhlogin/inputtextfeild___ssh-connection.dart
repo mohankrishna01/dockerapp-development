@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:docker_app/Dashboard/dashboard.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ssh2/ssh2.dart';
@@ -10,7 +7,7 @@ class InputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController hostController = TextEditingController();
-    TextEditingController portController = TextEditingController();
+    TextEditingController portController = TextEditingController(text: "22");
     TextEditingController userController = TextEditingController();
     TextEditingController pasController = TextEditingController();
 
@@ -20,8 +17,7 @@ class InputTextField extends StatelessWidget {
           width: 350.0,
           child: Column(
             children: [
-              TextField(
-                onChanged: (value) {},
+              TextFormField(
                 decoration: InputDecoration(
                   labelText: "Name",
                   border: OutlineInputBorder(
@@ -44,11 +40,10 @@ class InputTextField extends StatelessWidget {
               SizedBox(
                 height: 16.0,
               ),
-              TextField(
+              TextFormField(
                 controller: portController,
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
-                  counterText: "22",
                   labelText: "Port",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -91,6 +86,10 @@ class InputTextField extends StatelessWidget {
               ),
               child: ElevatedButton(
                 onPressed: () async {
+                  String result = '';
+                  bool errorshow = false;
+                  var connectionresult;
+
                   var host = hostController.text;
                   var port = portController.text;
                   var username = userController.text;
@@ -101,9 +100,6 @@ class InputTextField extends StatelessWidget {
                       port: int.parse(port),
                       username: username,
                       passwordOrKey: password);
-                  var connectionresult;
-                  String result = '';
-                  bool errorshow = false;
 
                   try {
                     result = (await client.connect())!;
@@ -118,13 +114,25 @@ class InputTextField extends StatelessWidget {
                   }
 
                   errorshow
-                      ? print("check field")
+                      ? ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Authentication failed"),
+                          ),
+                        )
                       : Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DashboardUi(
                               client: client,
                             ),
+                          ),
+                        );
+                  errorshow
+                      ? Null
+                      : ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            padding: EdgeInsets.only(bottom: 0.0),
+                            content: Text("Session connected"),
                           ),
                         );
                 },
