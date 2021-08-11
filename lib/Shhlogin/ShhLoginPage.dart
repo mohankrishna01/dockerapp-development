@@ -1,5 +1,5 @@
 import 'package:docker_app/Shhlogin/dockerimage.dart';
-import 'package:docker_app/Shhlogin/inputtextfeild.dart';
+import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
 import 'package:flutter/material.dart';
 
 import 'headlinetext.dart';
@@ -19,8 +19,6 @@ class ShhLoginPage extends StatelessWidget {
             height: 20.0,
           ),
           InputTextField(),
-
-          //  ShhLoginConnection(),
         ],
       ),
     );

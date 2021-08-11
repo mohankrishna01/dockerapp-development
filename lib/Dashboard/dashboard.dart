@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-class DashboardUi extends StatefulWidget {
-  @override
-  _DashboardUiState createState() => _DashboardUiState();
-}
-
-class _DashboardUiState extends State<DashboardUi> {
+class DashboardUi extends StatelessWidget {
+  var client;
+  DashboardUi({this.client});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +15,10 @@ class _DashboardUiState extends State<DashboardUi> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-            onPressed: null,
+            onPressed: () async {
+              var result = await client.execute("ps");
+              print(result);
+            },
             child: Icon(
               Icons.add,
               size: 30.0,

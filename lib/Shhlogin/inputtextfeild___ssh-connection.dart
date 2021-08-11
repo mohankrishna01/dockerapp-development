@@ -1,4 +1,9 @@
+import 'dart:math';
+
+import 'package:docker_app/Dashboard/dashboard.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ssh2/ssh2.dart';
 
 class InputTextField extends StatelessWidget {
@@ -82,17 +87,7 @@ class InputTextField extends StatelessWidget {
             Container(
               padding: EdgeInsets.only(
                 top: 20.0,
-                left: 70.0,
-              ),
-              child: ElevatedButton(
-                onPressed: null,
-                child: Text("Test"),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                top: 20.0,
-                left: 90.0,
+                left: 150.0,
               ),
               child: ElevatedButton(
                 onPressed: () async {
@@ -106,8 +101,32 @@ class InputTextField extends StatelessWidget {
                       port: int.parse(port),
                       username: username,
                       passwordOrKey: password);
+                  var connectionresult;
+                  String result = '';
+                  bool errorshow = false;
 
-                  await client.connect();
+                  try {
+                    result = (await client.connect())!;
+                    if (result == "session_connected")
+                      result = (await client.execute("ps"))!;
+                    client.disconnect();
+                  } on PlatformException catch (e) {
+                    connectionresult = e.code;
+                    print(connectionresult);
+                    var val = connectionresult;
+                    errorshow = val.toLowerCase() == 'connection_failure';
+                  }
+
+                  errorshow
+                      ? print("check field")
+                      : Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DashboardUi(
+                              client: client,
+                            ),
+                          ),
+                        );
                 },
                 child: Text("Connect"),
               ),
