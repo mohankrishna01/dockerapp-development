@@ -6,17 +6,13 @@ class DashboardUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BottomAppBar(
-          child: IconButton(
-            alignment: Alignment.bottomLeft,
-            icon: Icon(Icons.list_alt),
-            onPressed: null,
-          ),
+        appBar: AppBar(
+          title: Text("Dashboard"),
+          centerTitle: true,
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              var result = await client.execute("ps");
+              var result = await client.execute("ls");
               print(result);
             },
             child: Icon(

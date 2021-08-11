@@ -6,10 +6,11 @@ import 'package:ssh2/ssh2.dart';
 class InputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    TextEditingController hostController = TextEditingController();
+    TextEditingController hostController =
+        TextEditingController(text: "192.168.43.108");
     TextEditingController portController = TextEditingController(text: "22");
-    TextEditingController userController = TextEditingController();
-    TextEditingController pasController = TextEditingController();
+    TextEditingController userController = TextEditingController(text: "root");
+    TextEditingController pasController = TextEditingController(text: "redhat");
 
     return Column(
       children: [
@@ -86,7 +87,6 @@ class InputTextField extends StatelessWidget {
               ),
               child: ElevatedButton(
                 onPressed: () async {
-                  String result = '';
                   bool errorshow = false;
                   var connectionresult;
 
@@ -102,10 +102,7 @@ class InputTextField extends StatelessWidget {
                       passwordOrKey: password);
 
                   try {
-                    result = (await client.connect())!;
-                    if (result == "session_connected")
-                      result = (await client.execute("ps"))!;
-                    client.disconnect();
+                    await client.connect();
                   } on PlatformException catch (e) {
                     connectionresult = e.code;
                     print(connectionresult);
@@ -131,7 +128,6 @@ class InputTextField extends StatelessWidget {
                       ? Null
                       : ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            padding: EdgeInsets.only(bottom: 0.0),
                             content: Text("Session connected"),
                           ),
                         );
