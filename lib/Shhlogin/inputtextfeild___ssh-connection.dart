@@ -15,7 +15,7 @@ class InputTextField extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 350.0,
+          width: 350,
           child: Column(
             children: [
               TextFormField(
@@ -75,67 +75,62 @@ class InputTextField extends StatelessWidget {
                   ),
                 ),
               ),
+              Container(
+                padding: EdgeInsets.only(
+                  top: 20.0,
+                ),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    bool errorshow = false;
+                    var connectionresult;
+
+                    var host = hostController.text;
+                    var port = portController.text;
+                    var username = userController.text;
+                    var password = pasController.text;
+
+                    var client = SSHClient(
+                        host: host,
+                        port: int.parse(port),
+                        username: username,
+                        passwordOrKey: password);
+
+                    try {
+                      await client.connect();
+                    } on PlatformException catch (e) {
+                      connectionresult = e.code;
+                      print(connectionresult);
+                      var val = connectionresult;
+                      errorshow = val.toLowerCase() == 'connection_failure';
+                    }
+
+                    errorshow
+                        ? ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Authentication failed"),
+                            ),
+                          )
+                        : Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DashboardUi(
+                                client: client,
+                              ),
+                            ),
+                          );
+                    errorshow
+                        ? Null
+                        : ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Session connected"),
+                            ),
+                          );
+                  },
+                  child: Text("Connect"),
+                ),
+              ),
             ],
           ),
-        ),
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                top: 20.0,
-                left: 150.0,
-              ),
-              child: ElevatedButton(
-                onPressed: () async {
-                  bool errorshow = false;
-                  var connectionresult;
-
-                  var host = hostController.text;
-                  var port = portController.text;
-                  var username = userController.text;
-                  var password = pasController.text;
-
-                  var client = SSHClient(
-                      host: host,
-                      port: int.parse(port),
-                      username: username,
-                      passwordOrKey: password);
-
-                  try {
-                    await client.connect();
-                  } on PlatformException catch (e) {
-                    connectionresult = e.code;
-                    print(connectionresult);
-                    var val = connectionresult;
-                    errorshow = val.toLowerCase() == 'connection_failure';
-                  }
-
-                  errorshow
-                      ? ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Authentication failed"),
-                          ),
-                        )
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DashboardUi(
-                              client: client,
-                            ),
-                          ),
-                        );
-                  errorshow
-                      ? Null
-                      : ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Session connected"),
-                          ),
-                        );
-                },
-                child: Text("Connect"),
-              ),
-            ),
-          ],
         ),
       ],
     );

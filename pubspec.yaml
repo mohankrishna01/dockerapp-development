@@ -69,3 +69,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+fonts:
+  - family: cabin
+    fonts:
+      - asset: fonts\Cabin-Italic-VariableFont_wdth,wght.ttf
+      - asset: fonts\Cabin-VariableFont_wdth,wght.ttf
