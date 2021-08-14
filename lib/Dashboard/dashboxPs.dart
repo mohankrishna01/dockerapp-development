@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class DashBoxTC extends StatelessWidget {
-  var totalcontainers;
+class DashBoxPaused extends StatelessWidget {
+  var pausedcontainers;
 
-  DashBoxTC({this.totalcontainers});
+  DashBoxPaused({this.pausedcontainers});
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-        //top: MediaQuery.of(context).size.height * 0.04,
+        top: MediaQuery.of(context).size.height * 0.03,
         left: MediaQuery.of(context).size.height * 0.03,
       ),
       height: 95.0,
@@ -19,9 +19,9 @@ class DashBoxTC extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.lightBlue,
-            Colors.blue,
-            Colors.lightBlue,
+            Colors.orangeAccent,
+            Colors.orange,
+            Colors.orangeAccent,
           ],
         ),
       ),
@@ -31,7 +31,7 @@ class DashBoxTC extends StatelessWidget {
             height: 20.0,
           ),
           Text(
-            "Total Containers",
+            "Paused Containers",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class DashBoxTC extends StatelessWidget {
             height: 5.0,
           ),
           Text(
-            totalcontainers,
+            pausedcontainers,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,

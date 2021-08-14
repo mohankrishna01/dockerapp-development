@@ -1,4 +1,7 @@
+import 'package:docker_app/Dashboard/dashboxPs.dart';
+import 'package:docker_app/Dashboard/dashboxRunning.dart';
 import 'package:docker_app/Dashboard/dashboxTC.dart';
+import 'package:docker_app/Dashboard/dashboxst.dart';
 import 'package:flutter/material.dart';
 
 class DockerInfoContainer extends StatefulWidget {
@@ -11,10 +14,17 @@ class DockerInfoContainer extends StatefulWidget {
 
 class _DockerInfoContainerState extends State<DockerInfoContainer> {
   String totalcontainers = "-";
+  String runningcontainers = "-";
+  String pausedcontainers = "-";
+  String stoppedcontainers = "-";
 
-  void totalcontainervalue(changedvalue) {
+  void totalcontainervalue(
+      tcchangedvalue, rnchangedvalue, pschangevalue, stchangevalue) {
     setState(() {
-      totalcontainers = changedvalue;
+      totalcontainers = tcchangedvalue;
+      runningcontainers = rnchangedvalue;
+      pausedcontainers = pschangevalue;
+      stoppedcontainers = stchangevalue;
     });
   }
 
@@ -27,15 +37,41 @@ class _DockerInfoContainerState extends State<DockerInfoContainer> {
           margin: EdgeInsets.only(left: 350.0),
           child: IconButton(
             onPressed: () async {
-              var result = await widget.sshclient
+              var tcresult = await widget.sshclient
                   .execute("docker info --format '{{json .Containers}}'");
-              totalcontainervalue(result);
+              var rnresult = await widget.sshclient.execute(
+                  "docker info --format '{{json .ContainersRunning}}'");
+              var psresult = await widget.sshclient
+                  .execute("docker info --format '{{json .ContainersPaused}}'");
+              var stresult = await widget.sshclient.execute(
+                  "docker info --format '{{json .ContainersStopped}}'");
+              totalcontainervalue(tcresult, rnresult, psresult, stresult);
             },
             icon: Icon(Icons.refresh),
           ),
         ),
-        DashBoxTC(
-          totalcontainers: totalcontainers,
+        Row(
+          children: [
+            DashBoxTC(
+              totalcontainers: totalcontainers,
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.1,
+            ),
+            DashBoxRunning(
+              runningcontainers: runningcontainers,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            DashBoxPaused(
+              pausedcontainers: pausedcontainers,
+            ),
+            DashBoxStopped(
+              stoppedcontainers: stoppedcontainers,
+            ),
+          ],
         ),
       ],
     );
