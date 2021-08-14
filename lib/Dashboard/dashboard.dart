@@ -4,6 +4,7 @@ import 'Dockerinfo-container.dart';
 
 class DashboardUi extends StatelessWidget {
   var client;
+
   DashboardUi({this.client});
 
   @override
@@ -31,11 +32,14 @@ class DashboardUi extends StatelessWidget {
           color: Colors.blue,
         ),
       ),
-      body: Column(children: [
-        DockerInfoContainer(
-          client: client,
-        ),
-      ]),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DockerInfoContainer(
+            sshclient: client,
+          ),
+        ],
+      ),
     );
   }
 }
