@@ -1,4 +1,5 @@
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
+import 'package:docker_app/Dashboard/dashboard-dockerinfobox.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'Dockerinfo-container.dart';
@@ -19,17 +20,38 @@ class _DashboardUiState extends State<DashboardUi> {
   var rnresult = "...";
   var psresult = "...";
   var stresult = "...";
-  void setvalue(
+  var nofimages = "...";
+  var serverversion = "...";
+  var cgroupdriver = "...";
+  var kernelversion = "...";
+  var operatingsystem = "...";
+  var ostype = "...";
+  var defaultruntime = "...";
+  void setvalue({
     tcres,
     rnres,
     psres,
     stres,
-  ) {
+    nimage,
+    serversion,
+    cgdriver,
+    kversion,
+    osystem,
+    otype,
+    druntime,
+  }) {
     setState(() {
       tcresult = tcres;
       rnresult = rnres;
       psresult = psres;
       stresult = stres;
+      nofimages = nimage;
+      serverversion = serversion;
+      cgroupdriver = cgdriver;
+      kernelversion = kversion;
+      operatingsystem = osystem;
+      ostype = otype;
+      defaultruntime = druntime;
     });
   }
 
@@ -48,7 +70,34 @@ class _DashboardUiState extends State<DashboardUi> {
               .execute("docker info --format '{{json .ContainersPaused}}'");
           stresult = await widget.client
               .execute("docker info --format '{{json .ContainersStopped}}'");
-          setvalue(tcresult, rnresult, psresult, stresult);
+          nofimages = await widget.client
+              .execute("docker info --format '{{json .Images}}'");
+          serverversion = await widget.client
+              .execute("docker info --format '{{json .ServerVersion}}'");
+          cgroupdriver = await widget.client
+              .execute("docker info --format '{{json .CgroupDriver}}'");
+          kernelversion = await widget.client
+              .execute("docker info --format '{{json .KernelVersion}}'");
+          operatingsystem = await widget.client
+              .execute("docker info --format '{{json .OperatingSystem}}'");
+          ostype = await widget.client
+              .execute("docker info --format '{{json .OSType}}'");
+          defaultruntime = await widget.client
+              .execute("docker info --format '{{json .DefaultRuntime}}'");
+
+          setvalue(
+            tcres: tcresult,
+            rnres: rnresult,
+            psres: psresult,
+            stres: stresult,
+            nimage: nofimages,
+            serversion: serverversion,
+            cgdriver: cgroupdriver,
+            kversion: kernelversion,
+            osystem: operatingsystem,
+            otype: ostype,
+            druntime: defaultruntime,
+          );
         } catch (e) {
           try {
             widget.client.connect();
@@ -69,13 +118,20 @@ class _DashboardUiState extends State<DashboardUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          color: Colors.amber,
+          child: Text("hi"),
+        ),
+      ),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
         title: Text(
           "Dashboard",
           style: TextStyle(color: Colors.black),
@@ -106,6 +162,37 @@ class _DashboardUiState extends State<DashboardUi> {
               pausedcontainers: psresult,
               runningcontainers: rnresult,
               stoppedcontainers: stresult,
+            ),
+            SizedBox(
+              height: 25.0,
+            ),
+            Center(
+              child: Container(
+                height: 30.0,
+                width: 160.0,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Center(
+                  child: Text(
+                    "Docker Info",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            DockerInfoBox(
+              nofimages: nofimages,
+              serverversion: serverversion,
+              cgroupdriver: cgroupdriver,
+              kernalversion: kernelversion,
+              operatingsystem: operatingsystem,
+              ostype: ostype,
+              defaultruntime: defaultruntime,
             ),
           ],
         ),
