@@ -1,11 +1,70 @@
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'Dockerinfo-container.dart';
 
-class DashboardUi extends StatelessWidget {
+class DashboardUi extends StatefulWidget {
   var client;
 
   DashboardUi({this.client});
+
+  @override
+  _DashboardUiState createState() => _DashboardUiState();
+}
+
+class _DashboardUiState extends State<DashboardUi> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: true);
+  var tcresult = "...";
+  var rnresult = "...";
+  var psresult = "...";
+  var stresult = "...";
+  void setvalue(
+    tcres,
+    rnres,
+    psres,
+    stres,
+  ) {
+    setState(() {
+      tcresult = tcres;
+      rnresult = rnres;
+      psresult = psres;
+      stresult = stres;
+    });
+  }
+
+  void _onRefresh() async {
+    // monitor network fetch
+
+    await Future.delayed(
+      Duration(),
+      () async {
+        try {
+          tcresult = await widget.client
+              .execute("docker info --format '{{json .Containers}}'");
+          rnresult = await widget.client
+              .execute("docker info --format '{{json .ContainersRunning}}'");
+          psresult = await widget.client
+              .execute("docker info --format '{{json .ContainersPaused}}'");
+          stresult = await widget.client
+              .execute("docker info --format '{{json .ContainersStopped}}'");
+          setvalue(tcresult, rnresult, psresult, stresult);
+        } catch (e) {
+          try {
+            widget.client.connect();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("session is down"),
+              ),
+            );
+          } catch (e) {}
+        }
+      },
+    );
+
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +91,24 @@ class DashboardUi extends StatelessWidget {
           color: Colors.blue,
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DockerInfoContainer(
-            sshclient: client,
-          ),
-        ],
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: ClassicHeader(),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DockerInfoContainer(
+              sshclient: widget.client,
+              totalcontainers: tcresult,
+              pausedcontainers: psresult,
+              runningcontainers: rnresult,
+              stoppedcontainers: stresult,
+            ),
+          ],
+        ),
       ),
     );
   }
