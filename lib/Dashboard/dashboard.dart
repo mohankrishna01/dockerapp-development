@@ -1,6 +1,7 @@
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
 import 'package:docker_app/Dashboard/dashboard-dockerinfobox.dart';
 import 'package:docker_app/Dashboard/drawer.dart';
+import 'package:docker_app/floatingactionbutton/fab.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'Dockerinfo-container.dart';
@@ -159,7 +160,15 @@ class _DashboardUiState extends State<DashboardUi> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) => Fabutton(
+              sshclient: widget.client,
+            ),
+            isScrollControlled: true,
+          );
+        },
         child: Icon(
           Icons.add,
           size: 30.0,

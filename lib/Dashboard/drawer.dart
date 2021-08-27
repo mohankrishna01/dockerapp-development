@@ -19,7 +19,14 @@ class DashboardDrawer extends StatelessWidget {
           Card(
             child: ListTile(
               onTap: () {
-                Navigator.pushNamed(context, "containerlist");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ContainerList(
+                      sshclient: sshclient,
+                    ),
+                  ),
+                );
               },
               enableFeedback: true,
               title: Text("Containers"),

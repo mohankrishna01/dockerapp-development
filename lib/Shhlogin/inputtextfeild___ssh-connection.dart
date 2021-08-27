@@ -43,6 +43,7 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 controller: portController,
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
@@ -68,6 +69,7 @@ class InputTextField extends StatelessWidget {
                 height: 16.0,
               ),
               TextField(
+                obscureText: true,
                 controller: pasController,
                 decoration: InputDecoration(
                   labelText: "Password",
