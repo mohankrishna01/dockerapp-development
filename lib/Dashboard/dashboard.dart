@@ -1,13 +1,15 @@
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
 import 'package:docker_app/Dashboard/dashboard-dockerinfobox.dart';
+import 'package:docker_app/Dashboard/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'Dockerinfo-container.dart';
 
 class DashboardUi extends StatefulWidget {
   var client;
+  var name;
 
-  DashboardUi({this.client});
+  DashboardUi({this.client, this.name});
 
   @override
   _DashboardUiState createState() => _DashboardUiState();
@@ -16,6 +18,8 @@ class DashboardUi extends StatefulWidget {
 class _DashboardUiState extends State<DashboardUi> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
+
+//variables
   var tcresult = "...";
   var rnresult = "...";
   var psresult = "...";
@@ -27,6 +31,10 @@ class _DashboardUiState extends State<DashboardUi> {
   var operatingsystem = "...";
   var ostype = "...";
   var defaultruntime = "...";
+  var registry = "...";
+  var productlicense = "...";
+
+  // set state
   void setvalue({
     tcres,
     rnres,
@@ -39,6 +47,8 @@ class _DashboardUiState extends State<DashboardUi> {
     osystem,
     otype,
     druntime,
+    rg,
+    plicense,
   }) {
     setState(() {
       tcresult = tcres;
@@ -52,6 +62,8 @@ class _DashboardUiState extends State<DashboardUi> {
       operatingsystem = osystem;
       ostype = otype;
       defaultruntime = druntime;
+      registry = rg;
+      productlicense = plicense;
     });
   }
 
@@ -84,6 +96,10 @@ class _DashboardUiState extends State<DashboardUi> {
               .execute("docker info --format '{{json .OSType}}'");
           defaultruntime = await widget.client
               .execute("docker info --format '{{json .DefaultRuntime}}'");
+          registry = await widget.client
+              .execute("docker info --format '{{json .IndexServerAddress}}'");
+          productlicense = await widget.client
+              .execute("docker info --format '{{json .ProductLicense}}'");
 
           setvalue(
             tcres: tcresult,
@@ -97,10 +113,15 @@ class _DashboardUiState extends State<DashboardUi> {
             osystem: operatingsystem,
             otype: ostype,
             druntime: defaultruntime,
+            rg: registry,
+            plicense: productlicense,
           );
         } catch (e) {
           try {
+            //reconnect shhclient
             widget.client.connect();
+
+            //show snack bar
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text("session is down"),
@@ -118,11 +139,9 @@ class _DashboardUiState extends State<DashboardUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Container(
-          color: Colors.amber,
-          child: Text("hi"),
-        ),
+      drawer: DashboardDrawer(
+        sshclient: widget.client,
+        name: widget.name,
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
@@ -164,12 +183,12 @@ class _DashboardUiState extends State<DashboardUi> {
               stoppedcontainers: stresult,
             ),
             SizedBox(
-              height: 25.0,
+              height: 18.0,
             ),
             Center(
               child: Container(
                 height: 30.0,
-                width: 160.0,
+                width: 150.0,
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(20.0),
@@ -178,12 +197,15 @@ class _DashboardUiState extends State<DashboardUi> {
                   child: Text(
                     "Docker Info",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 17.0,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 5.0,
             ),
             DockerInfoBox(
               nofimages: nofimages,
@@ -193,6 +215,8 @@ class _DashboardUiState extends State<DashboardUi> {
               operatingsystem: operatingsystem,
               ostype: ostype,
               defaultruntime: defaultruntime,
+              registry: registry,
+              productlicense: productlicense,
             ),
           ],
         ),

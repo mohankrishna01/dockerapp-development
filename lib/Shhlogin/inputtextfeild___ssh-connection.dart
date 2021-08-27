@@ -6,6 +6,7 @@ import 'package:ssh2/ssh2.dart';
 class InputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    TextEditingController nameController = TextEditingController();
     TextEditingController hostController = TextEditingController();
     TextEditingController portController = TextEditingController(text: "22");
     TextEditingController userController = TextEditingController();
@@ -18,6 +19,7 @@ class InputTextField extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
+                controller: nameController,
                 decoration: InputDecoration(
                   labelText: "Name",
                   border: OutlineInputBorder(
@@ -87,7 +89,7 @@ class InputTextField extends StatelessWidget {
                     var port = portController.text;
                     var username = userController.text;
                     var password = pasController.text;
-
+                    var name = nameController.text;
                     var client = SSHClient(
                         host: host,
                         port: int.parse(port),
@@ -114,6 +116,7 @@ class InputTextField extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => DashboardUi(
                                 client: client,
+                                name: name,
                               ),
                             ),
                           );

@@ -8,6 +8,9 @@ class DockerInfoBox extends StatelessWidget {
   var operatingsystem;
   var ostype;
   var defaultruntime;
+  var registry;
+  var productlicense;
+
   DockerInfoBox({
     this.nofimages,
     this.serverversion,
@@ -16,7 +19,10 @@ class DockerInfoBox extends StatelessWidget {
     this.operatingsystem,
     this.ostype,
     this.defaultruntime,
+    this.registry,
+    this.productlicense,
   });
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -55,6 +61,14 @@ class DockerInfoBox extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.laptop_mac),
                 title: Text("OSType: " + ostype),
+              ),
+              ListTile(
+                leading: Icon(Icons.layers_rounded),
+                title: Text("Registry: " + registry),
+              ),
+              ListTile(
+                leading: Icon(Icons.card_membership),
+                title: Text("Product License: " + productlicense),
               ),
             ],
           ),
