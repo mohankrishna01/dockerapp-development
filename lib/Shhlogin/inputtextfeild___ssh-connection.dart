@@ -6,11 +6,10 @@ import 'package:ssh2/ssh2.dart';
 class InputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    TextEditingController hostController =
-        TextEditingController(text: "192.168.43.108");
+    TextEditingController hostController = TextEditingController();
     TextEditingController portController = TextEditingController(text: "22");
-    TextEditingController userController = TextEditingController(text: "root");
-    TextEditingController pasController = TextEditingController(text: "redhat");
+    TextEditingController userController = TextEditingController();
+    TextEditingController pasController = TextEditingController();
 
     return Column(
       children: [
