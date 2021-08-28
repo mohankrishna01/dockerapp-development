@@ -151,7 +151,16 @@ class _DashboardUiState extends State<DashboardUi> {
         ),
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
-        //automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await widget.client.disconnect();
+
+              Navigator.pushNamed(context, "home");
+            },
+          ),
+        ],
         title: Text(
           "Dashboard",
           style: TextStyle(color: Colors.black),
