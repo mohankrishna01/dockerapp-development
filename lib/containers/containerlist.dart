@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class ContainerList extends StatefulWidget {
   var sshclient;
@@ -8,6 +11,45 @@ class ContainerList extends StatefulWidget {
 }
 
 class _ContainerListState extends State<ContainerList> {
+  final RoundedLoadingButtonController _deleteallController =
+      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _deleteallstController =
+      RoundedLoadingButtonController();
+
+  void _deleteall() async {
+    Timer(Duration(), () async {
+      await widget.sshclient.execute("docker rm -f \$(docker ps -q -a)");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("All containers deleted"),
+        ),
+      );
+
+      _deleteallController.success();
+      Timer(Duration(seconds: 1), () {
+        Navigator.of(context).pop();
+      });
+    });
+  }
+
+  void _deleteallst() async {
+    Timer(Duration(), () async {
+      await widget.sshclient.execute("docker rm  \$(docker ps -q -a)");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("All stopped containers deleted"),
+        ),
+      );
+
+      _deleteallstController.success();
+      Timer(Duration(seconds: 1), () {
+        Navigator.of(context).pop();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,33 +108,34 @@ class _ContainerListState extends State<ContainerList> {
                             "You are about to delete all stopped containers.Deleted containers will not be recoverable.",
                           ),
                           actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
-                              child: Text("cancal"),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Colors.red,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  child: Text("cancal"),
                                 ),
-                              ),
-                              onPressed: () async {
-                                await widget.sshclient
-                                    .execute("docker rm  \$(docker ps -q -a)");
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text("All stopped containers deleted"),
+                                SizedBox(
+                                  width: 20.0,
+                                ),
+                                RoundedLoadingButton(
+                                  height: 37.5,
+                                  borderRadius: 3.5,
+                                  successColor: Colors.green,
+                                  width: 90.0,
+                                  color: Colors.red,
+                                  child: Text(
+                                    'delete all',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                );
-                                Navigator.of(ctx).pop();
-                              },
-                              child: Text(
-                                "delete",
-                              ),
+                                  controller: _deleteallstController,
+                                  onPressed: _deleteallst,
+                                )
+                              ],
                             ),
                           ],
                         ),
@@ -124,32 +167,34 @@ class _ContainerListState extends State<ContainerList> {
                             "You are about to delete all containers (both stopped and running)     Deleted containers will not be recoverable",
                           ),
                           actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
-                              child: Text("cancal"),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Colors.red,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  child: Text("cancal"),
                                 ),
-                              ),
-                              onPressed: () async {
-                                await widget.sshclient.execute(
-                                    "docker rm -f \$(docker ps -q -a)");
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("All containers deleted"),
+                                SizedBox(
+                                  width: 20.0,
+                                ),
+                                RoundedLoadingButton(
+                                  height: 37.5,
+                                  borderRadius: 3.5,
+                                  successColor: Colors.green,
+                                  width: 90.0,
+                                  color: Colors.red,
+                                  child: Text(
+                                    'delete all',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                );
-                                Navigator.of(ctx).pop();
-                              },
-                              child: Text(
-                                "delete all",
-                              ),
+                                  controller: _deleteallController,
+                                  onPressed: _deleteall,
+                                )
+                              ],
                             ),
                           ],
                         ),

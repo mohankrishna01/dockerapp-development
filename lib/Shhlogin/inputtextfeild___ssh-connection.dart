@@ -1,9 +1,17 @@
+import 'dart:async';
+
 import 'package:docker_app/Dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ssh2/ssh2.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class InputTextField extends StatelessWidget {
+  var client;
+
+  InputTextField({
+    this.client,
+  });
   @override
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController();
@@ -12,6 +20,91 @@ class InputTextField extends StatelessWidget {
     TextEditingController userController = TextEditingController();
     TextEditingController pasController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
+
+    final RoundedLoadingButtonController _btnController =
+        RoundedLoadingButtonController();
+
+    void _doSomething() async {
+      Timer(
+        Duration(),
+        () async {
+          if (_formKey.currentState!.validate()) {
+            bool errorshow = false;
+            var connectionresult;
+
+            var host = hostController.text;
+            var port = portController.text;
+            var username = userController.text;
+            var password = pasController.text;
+            var name = nameController.text;
+
+            client = SSHClient(
+                host: host,
+                port: int.parse(port),
+                username: username,
+                passwordOrKey: password);
+
+            try {
+              await client.connect();
+            } on PlatformException catch (e) {
+              connectionresult = e.code;
+              print(connectionresult);
+              var val = connectionresult;
+              errorshow = val.toLowerCase() == 'connection_failure';
+            }
+
+            if (errorshow == true) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Authentication failed"),
+                ),
+              );
+              _btnController.error();
+              Timer(Duration(seconds: 4), () {
+                _btnController.reset();
+              });
+            } else {
+              _btnController.success();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashboardUi(
+                    client: client,
+                    name: name,
+                  ),
+                ),
+              );
+            }
+
+            errorshow
+                ? Null
+                : ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Session connected"),
+                    ),
+                  );
+          } else {
+            _btnController.error();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.red[400],
+                content: Text(
+                  "Please complete all required fields",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+            Timer(Duration(seconds: 5), () {
+              _btnController.reset();
+            });
+          }
+        },
+      );
+    }
+
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.disabled,
@@ -115,70 +208,12 @@ class InputTextField extends StatelessWidget {
                   padding: EdgeInsets.only(
                     top: 20.0,
                   ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        bool errorshow = false;
-                        var connectionresult;
-
-                        var host = hostController.text;
-                        var port = portController.text;
-                        var username = userController.text;
-                        var password = pasController.text;
-                        var name = nameController.text;
-                        var client = SSHClient(
-                            host: host,
-                            port: int.parse(port),
-                            username: username,
-                            passwordOrKey: password);
-
-                        try {
-                          await client.connect();
-                        } on PlatformException catch (e) {
-                          connectionresult = e.code;
-                          print(connectionresult);
-                          var val = connectionresult;
-                          errorshow = val.toLowerCase() == 'connection_failure';
-                        }
-
-                        errorshow
-                            ? ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Authentication failed"),
-                                ),
-                              )
-                            : Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DashboardUi(
-                                    client: client,
-                                    name: name,
-                                  ),
-                                ),
-                              );
-
-                        errorshow
-                            ? Null
-                            : ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Session connected"),
-                                ),
-                              );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.red[400],
-                            content: Text(
-                              "Please complete all required fields",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Text("Connect"),
+                  child: RoundedLoadingButton(
+                    width: 100.0,
+                    child:
+                        Text('connect', style: TextStyle(color: Colors.white)),
+                    controller: _btnController,
+                    onPressed: _doSomething,
                   ),
                 ),
               ],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
 import 'package:docker_app/Dashboard/dashboard-dockerinfobox.dart';
 import 'package:docker_app/Dashboard/drawer.dart';
@@ -10,7 +12,10 @@ class DashboardUi extends StatefulWidget {
   var client;
   var name;
 
-  DashboardUi({this.client, this.name});
+  DashboardUi({
+    this.client,
+    this.name,
+  });
 
   @override
   _DashboardUiState createState() => _DashboardUiState();
@@ -139,104 +144,107 @@ class _DashboardUiState extends State<DashboardUi> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: DashboardDrawer(
-        sshclient: widget.client,
-        name: widget.name,
-      ),
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+    return WillPopScope(
+      onWillPop: () async => exit(0),
+      child: Scaffold(
+        drawer: DashboardDrawer(
+          sshclient: widget.client,
+          name: widget.name,
         ),
-        shadowColor: Colors.white,
-        backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await widget.client.disconnect();
-
-              Navigator.pushNamed(context, "home");
-            },
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
           ),
-        ],
-        title: Text(
-          "Dashboard",
-          style: TextStyle(color: Colors.black),
+          shadowColor: Colors.white,
+          backgroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                await widget.client.disconnect();
+
+                Navigator.pushNamed(context, "home");
+              },
+            ),
+          ],
+          title: Text(
+            "Dashboard",
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) => Fabutton(
-              sshclient: widget.client,
-            ),
-            isScrollControlled: true,
-          );
-        },
-        child: Icon(
-          Icons.add,
-          size: 30.0,
-          color: Colors.blue,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) => Fabutton(
+                sshclient: widget.client,
+              ),
+              isScrollControlled: true,
+            );
+          },
+          child: Icon(
+            Icons.add,
+            size: 30.0,
+            color: Colors.blue,
+          ),
         ),
-      ),
-      body: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: false,
-        header: ClassicHeader(),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DockerInfoContainer(
-              sshclient: widget.client,
-              totalcontainers: tcresult,
-              pausedcontainers: psresult,
-              runningcontainers: rnresult,
-              stoppedcontainers: stresult,
-            ),
-            SizedBox(
-              height: 18.0,
-            ),
-            Center(
-              child: Container(
-                height: 30.0,
-                width: 150.0,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Center(
-                  child: Text(
-                    "Docker Info",
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      color: Colors.white,
+        body: SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: ClassicHeader(),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DockerInfoContainer(
+                sshclient: widget.client,
+                totalcontainers: tcresult,
+                pausedcontainers: psresult,
+                runningcontainers: rnresult,
+                stoppedcontainers: stresult,
+              ),
+              SizedBox(
+                height: 18.0,
+              ),
+              Center(
+                child: Container(
+                  height: 30.0,
+                  width: 150.0,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Docker Info",
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            DockerInfoBox(
-              nofimages: nofimages,
-              serverversion: serverversion,
-              cgroupdriver: cgroupdriver,
-              kernalversion: kernelversion,
-              operatingsystem: operatingsystem,
-              ostype: ostype,
-              defaultruntime: defaultruntime,
-              registry: registry,
-              productlicense: productlicense,
-            ),
-          ],
+              SizedBox(
+                height: 5.0,
+              ),
+              DockerInfoBox(
+                nofimages: nofimages,
+                serverversion: serverversion,
+                cgroupdriver: cgroupdriver,
+                kernalversion: kernelversion,
+                operatingsystem: operatingsystem,
+                ostype: ostype,
+                defaultruntime: defaultruntime,
+                registry: registry,
+                productlicense: productlicense,
+              ),
+            ],
+          ),
         ),
       ),
     );
