@@ -14,7 +14,7 @@ class InputTextField extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    TextEditingController nameController = TextEditingController(text: "ff");
+    TextEditingController nameController = TextEditingController();
     TextEditingController hostController = TextEditingController();
     TextEditingController portController = TextEditingController(text: "22");
     TextEditingController userController = TextEditingController();
