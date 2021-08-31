@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:docker_app/Shhlogin/dockerimage.dart';
 import 'package:docker_app/Shhlogin/headlinetext.dart';
 import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
@@ -19,21 +21,24 @@ class _ShhLoginPageState extends State<ShhLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          DockerImage(),
-          SizedBox(
-            height: 20.0,
-          ),
-          HeadlineText(),
-          SizedBox(
-            height: 25.0,
-          ),
-          InputTextField(
-            client: client,
-          )
-        ],
+    return WillPopScope(
+      onWillPop: () async => exit(1),
+      child: Scaffold(
+        body: ListView(
+          children: [
+            DockerImage(),
+            SizedBox(
+              height: 20.0,
+            ),
+            HeadlineText(),
+            SizedBox(
+              height: 25.0,
+            ),
+            InputTextField(
+              client: client,
+            )
+          ],
+        ),
       ),
     );
   }

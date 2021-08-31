@@ -145,7 +145,7 @@ class _DashboardUiState extends State<DashboardUi> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => exit(0),
+      onWillPop: () async => false,
       child: Scaffold(
         drawer: DashboardDrawer(
           sshclient: widget.client,

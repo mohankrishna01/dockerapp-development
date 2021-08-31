@@ -14,11 +14,12 @@ class InputTextField extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController hostController = TextEditingController();
+    TextEditingController nameController = TextEditingController(text: "ff");
+    TextEditingController hostController =
+        TextEditingController(text: "192.168.43.108");
     TextEditingController portController = TextEditingController(text: "22");
-    TextEditingController userController = TextEditingController();
-    TextEditingController pasController = TextEditingController();
+    TextEditingController userController = TextEditingController(text: "root");
+    TextEditingController pasController = TextEditingController(text: "redhat");
     final _formKey = GlobalKey<FormState>();
 
     final RoundedLoadingButtonController _btnController =
@@ -52,19 +53,87 @@ class InputTextField extends StatelessWidget {
               var val = connectionresult;
               errorshow = val.toLowerCase() == 'connection_failure';
             }
+            var dockerstatus;
+            try {
+              dockerstatus =
+                  await client.execute("docker ps &> /dev/null ; echo \$?");
+            } catch (e) {
+              print(e);
+            }
 
             if (errorshow == true) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Authentication failed"),
+                  backgroundColor: Colors.red,
+                  content: Row(
+                    children: [
+                      Text(
+                        "Authentication failed ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(
+                        Icons.error,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              _btnController.error();
+              Timer(
+                Duration(seconds: 4),
+                () {
+                  _btnController.reset();
+                },
+              );
+            } else if (int.parse(dockerstatus) == 1) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.red,
+                  content: Row(
+                    children: [
+                      Text(
+                        "Docker ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(
+                        Icons.error,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        " (Check docker service)",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
               _btnController.error();
-              Timer(Duration(seconds: 4), () {
-                _btnController.reset();
-              });
+              Timer(
+                Duration(seconds: 4),
+                () {
+                  _btnController.reset();
+                },
+              );
             } else {
               _btnController.success();
+
+              Timer(
+                Duration(seconds: 5),
+                () {
+                  _btnController.reset();
+                },
+              );
 
               Navigator.push(
                 context,
@@ -77,13 +146,15 @@ class InputTextField extends StatelessWidget {
               );
             }
 
-            errorshow
-                ? Null
-                : ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Session connected"),
-                    ),
-                  );
+            if (errorshow == true || int.parse(dockerstatus) == 1) {
+              Null;
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Session connected"),
+                ),
+              );
+            }
           } else {
             _btnController.error();
             ScaffoldMessenger.of(context).showSnackBar(
