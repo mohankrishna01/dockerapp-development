@@ -1,57 +1,55 @@
 import 'dart:async';
 
+import 'package:docker_app/containers/containerslistshow.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class ContainerList extends StatefulWidget {
+class ContainerList extends StatelessWidget {
   var sshclient;
   ContainerList({this.sshclient});
-  @override
-  _ContainerListState createState() => _ContainerListState();
-}
-
-class _ContainerListState extends State<ContainerList> {
-  final RoundedLoadingButtonController _deleteallController =
-      RoundedLoadingButtonController();
-  final RoundedLoadingButtonController _deleteallstController =
-      RoundedLoadingButtonController();
-
-  void _deleteall() async {
-    Timer(Duration(), () async {
-      await widget.sshclient.execute("docker rm -f \$(docker ps -q -a)");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("All containers deleted"),
-        ),
-      );
-
-      _deleteallController.success();
-      Timer(Duration(seconds: 1), () {
-        Navigator.of(context).pop();
-      });
-    });
-  }
-
-  void _deleteallst() async {
-    Timer(Duration(), () async {
-      await widget.sshclient.execute("docker rm  \$(docker ps -q -a)");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("All stopped containers deleted"),
-        ),
-      );
-
-      _deleteallstController.success();
-      Timer(Duration(seconds: 1), () {
-        Navigator.of(context).pop();
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final RoundedLoadingButtonController _deleteallController =
+        RoundedLoadingButtonController();
+    final RoundedLoadingButtonController _deleteallstController =
+        RoundedLoadingButtonController();
+
+    void _deleteall() async {
+      Timer(Duration(), () async {
+        await sshclient.execute("docker rm -f \$(docker ps -q -a)");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("All containers deleted"),
+          ),
+        );
+
+        _deleteallController.success();
+        Timer(Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+        });
+      });
+    }
+
+    void _deleteallst() async {
+      Timer(Duration(), () async {
+        await sshclient.execute("docker rm  \$(docker ps -q -a)");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("All stopped containers deleted"),
+          ),
+        );
+
+        _deleteallstController.success();
+        Timer(Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+        });
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -204,6 +202,9 @@ class _ContainerListState extends State<ContainerList> {
                 ],
               ),
             ),
+          ),
+          ContainersListShow(
+            sshclient: sshclient,
           ),
         ],
       ),

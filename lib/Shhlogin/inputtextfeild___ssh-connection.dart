@@ -14,11 +14,12 @@ class InputTextField extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController hostController = TextEditingController();
+    TextEditingController nameController = TextEditingController(text: "ff");
+    TextEditingController hostController =
+        TextEditingController(text: "192.168.43.108");
     TextEditingController portController = TextEditingController(text: "22");
-    TextEditingController userController = TextEditingController();
-    TextEditingController pasController = TextEditingController();
+    TextEditingController userController = TextEditingController(text: "root");
+    TextEditingController pasController = TextEditingController(text: "redhat");
     final _formKey = GlobalKey<FormState>();
 
     final RoundedLoadingButtonController _btnController =
