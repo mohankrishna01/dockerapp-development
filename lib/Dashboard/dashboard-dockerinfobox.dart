@@ -66,10 +66,6 @@ class DockerInfoBox extends StatelessWidget {
                 leading: Icon(Icons.layers_rounded),
                 title: Text("Registry: " + registry),
               ),
-              ListTile(
-                leading: Icon(Icons.card_membership),
-                title: Text("Product License: " + productlicense),
-              ),
             ],
           ),
         ),

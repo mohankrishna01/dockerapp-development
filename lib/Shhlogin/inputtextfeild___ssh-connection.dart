@@ -16,7 +16,7 @@ class InputTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController(text: "ff");
     TextEditingController hostController =
-        TextEditingController(text: "192.168.43.108");
+        TextEditingController(text: "192.168.43.6");
     TextEditingController portController = TextEditingController(text: "22");
     TextEditingController userController = TextEditingController(text: "root");
     TextEditingController pasController = TextEditingController(text: "redhat");

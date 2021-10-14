@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:docker_app/Dashboard/Dockerinfo-container.dart';
 import 'package:docker_app/Dashboard/dashboard-dockerinfobox.dart';
 import 'package:docker_app/Dashboard/drawer.dart';
+import 'package:docker_app/Shhlogin/ShhLoginPage.dart';
 import 'package:docker_app/floatingactionbutton/fab.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -104,8 +103,6 @@ class _DashboardUiState extends State<DashboardUi> {
               .execute("docker info --format '{{json .DefaultRuntime}}'");
           registry = await widget.client
               .execute("docker info --format '{{json .IndexServerAddress}}'");
-          productlicense = await widget.client
-              .execute("docker info --format '{{json .ProductLicense}}'");
 
           setvalue(
             tcres: tcresult,
@@ -164,7 +161,10 @@ class _DashboardUiState extends State<DashboardUi> {
               onPressed: () async {
                 await widget.client.disconnect();
 
-                Navigator.pushNamed(context, "home");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SshLoginPage()),
+                );
               },
             ),
           ],

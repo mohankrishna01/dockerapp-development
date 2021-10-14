@@ -5,12 +5,12 @@ import 'package:docker_app/Shhlogin/headlinetext.dart';
 import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
 import 'package:flutter/material.dart';
 
-class ShhLoginPage extends StatefulWidget {
+class SshLoginPage extends StatefulWidget {
   @override
-  _ShhLoginPageState createState() => _ShhLoginPageState();
+  _SshLoginPageState createState() => _SshLoginPageState();
 }
 
-class _ShhLoginPageState extends State<ShhLoginPage> {
+class _SshLoginPageState extends State<SshLoginPage> {
   var client;
 
   TextEditingController nameController = TextEditingController();
@@ -22,22 +22,26 @@ class _ShhLoginPageState extends State<ShhLoginPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => exit(1),
-      child: Scaffold(
-        body: ListView(
-          children: [
-            DockerImage(),
-            SizedBox(
-              height: 20.0,
-            ),
-            HeadlineText(),
-            SizedBox(
-              height: 25.0,
-            ),
-            InputTextField(
-              client: client,
-            )
-          ],
+      onWillPop: () async => exit(10000),
+      child: MaterialApp(
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: ListView(
+            children: [
+              DockerImage(),
+              SizedBox(
+                height: 20.0,
+              ),
+              HeadlineText(),
+              SizedBox(
+                height: 25.0,
+              ),
+              InputTextField(
+                client: client,
+              )
+            ],
+          ),
         ),
       ),
     );
