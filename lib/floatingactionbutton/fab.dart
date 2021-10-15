@@ -62,10 +62,13 @@ class _FabuttonState extends State<Fabutton> {
                 content: Text("Failed : Not Created"),
               ),
             );
+
             Timer(
               Duration(seconds: 4),
               () {
-                _btnController.reset();
+                try {
+                  _btnController.reset();
+                } catch (e) {}
               },
             );
           } else {
@@ -78,7 +81,9 @@ class _FabuttonState extends State<Fabutton> {
             Timer(
               Duration(seconds: 3),
               () {
-                _btnController.reset();
+                try {
+                  _btnController.reset();
+                } catch (e) {}
               },
             );
           }
@@ -96,10 +101,13 @@ class _FabuttonState extends State<Fabutton> {
               ),
             ),
           );
+
           Timer(
             Duration(seconds: 3),
             () {
-              _btnController.reset();
+              try {
+                _btnController.reset();
+              } catch (e) {}
             },
           );
         }
