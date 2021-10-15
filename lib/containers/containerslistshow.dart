@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ContainersListShow extends StatefulWidget {
@@ -48,29 +49,31 @@ class _ContainersListShowState extends State<ContainersListShow> {
         },
       );
     } catch (e) {
-      widget.sshclient.connect();
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(
-            "Error",
-            style: TextStyle(
-              color: Colors.red,
+      try {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(
+              "Error",
+              style: TextStyle(
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
+            content: Text(
+              "Host is down or No internet",
+              textAlign: TextAlign.center,
+            ),
           ),
-          content: Text(
-            "Host is down or No internet",
-            textAlign: TextAlign.center,
+        );
+        await widget.sshclient.connect();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("session connected"),
           ),
-        ),
-      );
+        );
+      } catch (e) {}
     }
-  }
-
-  void initState() {
-    super.initState();
-    containerlist();
   }
 
   RefreshController _refreshController =
@@ -97,50 +100,58 @@ class _ContainersListShowState extends State<ContainersListShow> {
         header: ClassicHeader(),
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: statelist[index]
-                        .toLowerCase()
-                        .contains("exited".toLowerCase())
-                    ? Container(
-                        height: 60.0,
-                        width: 6.0,
-                        color: Colors.red,
-                      )
-                    : Container(
-                        height: 60.0,
-                        width: 6.0,
-                        color: Colors.green,
-                      ),
-                isThreeLine: true,
-                title: Text(
-                  namelist[index],
+        child: namelist.isEmpty
+            ? Container(
+                padding: EdgeInsets.only(top: 40.0),
+                alignment: Alignment.topCenter,
+                child: Text(
+                  "No containers found",
+                  style: TextStyle(fontSize: 15.0),
                 ),
-                subtitle: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(statuslist[index]),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "image name: " + imagelist[index],
+              )
+            : ListView.builder(
+                itemBuilder: (context, index) {
+                  return Card(
+                      child: ListTile(
+                    leading: statelist[index]
+                            .toLowerCase()
+                            .contains("exited".toLowerCase())
+                        ? Container(
+                            height: 60.0,
+                            width: 6.0,
+                            color: Colors.red,
+                          )
+                        : Container(
+                            height: 60.0,
+                            width: 6.0,
+                            color: Colors.green,
                           ),
+                    isThreeLine: true,
+                    title: Text(
+                      namelist[index],
+                    ),
+                    subtitle: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(statuslist[index]),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "image name: " + imagelist[index],
+                              ),
+                            ],
+                          )
                         ],
-                      )
-                    ],
-                  ),
-                ),
+                      ),
+                    ),
+                  ));
+                },
+                itemCount: namelist.length,
               ),
-            );
-          },
-          itemCount: namelist.length,
-        ),
       ),
     );
   }

@@ -121,13 +121,18 @@ class _DashboardUiState extends State<DashboardUi> {
           );
         } catch (e) {
           try {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("session is down"),
+              ),
+            );
             //reconnect shhclient
-            widget.client.connect();
+            await widget.client.connect();
 
             //show snack bar
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("session is down"),
+                content: Text("session connected"),
               ),
             );
           } catch (e) {}

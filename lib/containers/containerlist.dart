@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:docker_app/containers/containerslistshow.dart';
+import 'package:docker_app/floatingactionbutton/fab.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class ContainerList extends StatelessWidget {
@@ -16,25 +16,8 @@ class ContainerList extends StatelessWidget {
     final RoundedLoadingButtonController _deleteallstController =
         RoundedLoadingButtonController();
 
-    void _deleteall() async {
-      Timer(Duration(), () async {
-        await sshclient.execute("docker rm -f \$(docker ps -q -a)");
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("All containers deleted"),
-          ),
-        );
-
-        _deleteallController.success();
-        Timer(Duration(seconds: 1), () {
-          Navigator.of(context).pop();
-        });
-      });
-    }
-
     void _deleteallst() async {
-      Timer(Duration(), () async {
+      try {
         await sshclient.execute("docker rm  \$(docker ps -q -a)");
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -44,10 +27,85 @@ class ContainerList extends StatelessWidget {
         );
 
         _deleteallstController.success();
-        Timer(Duration(seconds: 1), () {
+        Timer(Duration(milliseconds: 700), () {
           Navigator.of(context).pop();
         });
-      });
+      } catch (e) {
+        try {
+          _deleteallstController.error();
+          Navigator.of(context).pop();
+
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(
+                "Error",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              content: Text(
+                "Host is down or No internet",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+
+          await sshclient.connect();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Connected"),
+            ),
+          );
+        } catch (e) {}
+      }
+    }
+
+    void _deleteall() async {
+      try {
+        await sshclient.execute("docker rm -f \$(docker ps -q -a)");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("All containers deleted"),
+          ),
+        );
+
+        _deleteallController.success();
+        Timer(Duration(milliseconds: 700), () {
+          Navigator.of(context).pop();
+        });
+      } catch (e) {
+        try {
+          _deleteallController.error();
+          Navigator.of(context).pop();
+
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(
+                "Error",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              content: Text(
+                "Host is down or No internet",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+
+          await sshclient.connect();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Connected"),
+            ),
+          );
+        } catch (e) {}
+      }
     }
 
     return Scaffold(
@@ -79,6 +137,23 @@ class ContainerList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  IconButton(
+                    iconSize: 30.0,
+                    icon: Icon(
+                      Icons.add,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Fabutton(
+                            sshclient: sshclient,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   IconButton(
                     iconSize: 30.0,
                     icon: Icon(

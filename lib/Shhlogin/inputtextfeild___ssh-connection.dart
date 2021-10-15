@@ -16,7 +16,7 @@ class InputTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController(text: "ff");
     TextEditingController hostController =
-        TextEditingController(text: "192.168.43.6");
+        TextEditingController(text: "192.168.43.76");
     TextEditingController portController = TextEditingController(text: "22");
     TextEditingController userController = TextEditingController(text: "root");
     TextEditingController pasController = TextEditingController(text: "redhat");
@@ -93,27 +93,47 @@ class InputTextField extends StatelessWidget {
             } else if (int.parse(dockerstatus) == 1) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Row(
+                  backgroundColor: Colors.white,
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        "Docker ",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Authentication success ",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        Icons.error,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        " (Check docker service)",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Docker ",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          ),
+                          Text(
+                            " (Check docker service)",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
