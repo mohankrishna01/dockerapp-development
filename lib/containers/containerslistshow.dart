@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:docker_app/Shhlogin/ShhLoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class ContainersListShow extends StatefulWidget {
   var sshclient;
@@ -91,6 +96,13 @@ class _ContainersListShowState extends State<ContainersListShow> {
     _refreshController.refreshCompleted();
   }
 
+  final RoundedLoadingButtonController _rmcontainerController =
+      RoundedLoadingButtonController();
+  void initState() {
+    super.initState();
+    _onRefresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -105,7 +117,7 @@ class _ContainersListShowState extends State<ContainersListShow> {
                 padding: EdgeInsets.only(top: 40.0),
                 alignment: Alignment.topCenter,
                 child: Text(
-                  "No containers found",
+                  "No container(s) found",
                   style: TextStyle(fontSize: 15.0),
                 ),
               )
@@ -113,6 +125,196 @@ class _ContainersListShowState extends State<ContainersListShow> {
                 itemBuilder: (context, index) {
                   return Card(
                       child: ListTile(
+                    trailing: statelist[index]
+                            .toLowerCase()
+                            .contains("exited".toLowerCase())
+                        ? PopupMenuButton(
+                            itemBuilder: (_) => const <PopupMenuItem<String>>[
+                              PopupMenuItem<String>(
+                                  child: Text('start'), value: 'start'),
+                              PopupMenuItem<String>(
+                                  child: Text('remove'), value: 'rm'),
+                            ],
+                            onSelected: (value) async {
+                              void _rmcontainer() async {
+                                try {
+                                  await widget.sshclient.execute("docker " +
+                                      value.toString() +
+                                      "\t" +
+                                      namelist[index].replaceAll("\r", ""));
+
+                                  _onRefresh();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "container deleted successfully"),
+                                    ),
+                                  );
+
+                                  _rmcontainerController.success();
+                                  Navigator.of(context).pop();
+                                } catch (e) {
+                                  try {
+                                    _rmcontainerController.error();
+                                    Navigator.of(context).pop();
+
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: Text(
+                                          "Error",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        content: Text(
+                                          "Host is down or No internet",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+
+                                    await widget.sshclient.connect();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Connected"),
+                                      ),
+                                    );
+                                  } catch (e) {}
+                                }
+                              }
+
+                              if (value == "rm") {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: TextButton.icon(
+                                      onPressed: null,
+                                      icon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                      ),
+                                      label: Text(
+                                        "Warning",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    content: Text(
+                                      "You are about to delete the ${namelist[index]} containers.Deleted containers will not be recoverable.",
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                            child: Text("cancal"),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          RoundedLoadingButton(
+                                            height: 37.5,
+                                            borderRadius: 3.5,
+                                            successColor: Colors.green,
+                                            width: 90.0,
+                                            color: Colors.red,
+                                            child: Text(
+                                              'remove',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            controller: _rmcontainerController,
+                                            onPressed: _rmcontainer,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                try {
+                                  await widget.sshclient.execute("docker " +
+                                      value.toString() +
+                                      "\t" +
+                                      namelist[index].replaceAll("\r", ""));
+
+                                  _onRefresh();
+                                } catch (e) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: Text(
+                                        "Error",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      content: Text(
+                                        "Host is down or No internet",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+
+                                  await widget.sshclient.connect();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Connected"),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          )
+                        : PopupMenuButton(
+                            itemBuilder: (_) => const <PopupMenuItem<String>>[
+                              PopupMenuItem<String>(
+                                  child: Text('stop'), value: 'stop'),
+                            ],
+                            onSelected: (value) async {
+                              try {
+                                var result = await widget.sshclient.execute(
+                                    "docker " +
+                                        value.toString() +
+                                        "\t" +
+                                        namelist[index].replaceAll("\r", ""));
+                                _onRefresh();
+                              } catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(
+                                      "Error",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    content: Text(
+                                      "Host is down or No internet",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+
+                                await widget.sshclient.connect();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Connected"),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                     leading: statelist[index]
                             .toLowerCase()
                             .contains("exited".toLowerCase())

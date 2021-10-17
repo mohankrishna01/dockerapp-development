@@ -24,34 +24,108 @@ class _FabuttonState extends State<Fabutton> {
   var containername;
   var imagename;
   var isloading = false;
+
   void _doSomething() async {
     Timer(
       Duration(),
       () async {
         if (_formKey.currentState!.validate()) {
           var conresult;
+
           if (containername == null) {
-            if (dropdownValue == null) {
-              String raw = "docker run -dit --network  default $imagename";
-              String unRaw = raw.replaceAll('\r', '');
-              conresult = await widget.sshclient.execute(unRaw);
-            } else if (dropdownValue != null) {
-              String raw =
-                  "docker run -dit --network  $dropdownValue $imagename";
-              String unRaw = raw.replaceAll('\r', '');
-              conresult = await widget.sshclient.execute(unRaw);
+            try {
+              if (dropdownValue == null) {
+                String raw = "docker run -dit --network  default $imagename";
+                String unRaw = raw.replaceAll('\r', '');
+                conresult = await widget.sshclient.execute(unRaw);
+              } else if (dropdownValue != null) {
+                String raw =
+                    "docker run -dit --network  $dropdownValue $imagename";
+                String unRaw = raw.replaceAll('\r', '');
+                conresult = await widget.sshclient.execute(unRaw);
+              }
+            } catch (e) {
+              _btnController.error();
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(
+                    "Error",
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  content: Text(
+                    "Host is down or No internet",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+              Timer(
+                Duration(seconds: 3),
+                () {
+                  try {
+                    _btnController.reset();
+                  } catch (e) {}
+                },
+              );
+              try {
+                await widget.sshclient.connect();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("session connected"),
+                  ),
+                );
+              } catch (e) {}
             }
           } else if (containername != null) {
-            if (dropdownValue == null) {
-              String raw =
-                  "docker run -dit --name $containername --network  default $imagename";
-              String unRaw = raw.replaceAll('\r', '');
-              conresult = await widget.sshclient.execute(unRaw);
-            } else if (dropdownValue != null) {
-              String raw =
-                  "docker run -dit --name $containername --network  $dropdownValue $imagename";
-              String unRaw = raw.replaceAll('\r', '');
-              conresult = await widget.sshclient.execute(unRaw);
+            try {
+              if (dropdownValue == null) {
+                String raw =
+                    "docker run -dit --name $containername --network  default $imagename";
+                String unRaw = raw.replaceAll('\r', '');
+                conresult = await widget.sshclient.execute(unRaw);
+              } else if (dropdownValue != null) {
+                String raw =
+                    "docker run -dit --name $containername --network  $dropdownValue $imagename";
+                String unRaw = raw.replaceAll('\r', '');
+                conresult = await widget.sshclient.execute(unRaw);
+              }
+            } catch (e) {
+              _btnController.error();
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(
+                    "Error",
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  content: Text(
+                    "Host is down or No internet",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+              Timer(
+                Duration(seconds: 3),
+                () {
+                  try {
+                    _btnController.reset();
+                  } catch (e) {}
+                },
+              );
+              try {
+                await widget.sshclient.connect();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("session connected"),
+                  ),
+                );
+              } catch (e) {}
             }
           }
 
@@ -62,7 +136,6 @@ class _FabuttonState extends State<Fabutton> {
                 content: Text("Failed : Not Created"),
               ),
             );
-
             Timer(
               Duration(seconds: 4),
               () {
@@ -71,6 +144,7 @@ class _FabuttonState extends State<Fabutton> {
                 } catch (e) {}
               },
             );
+          } else if (conresult.hashCode == 2011) {
           } else {
             _btnController.success();
             ScaffoldMessenger.of(context).showSnackBar(
@@ -86,6 +160,8 @@ class _FabuttonState extends State<Fabutton> {
                 } catch (e) {}
               },
             );
+            containernameController.clear();
+            imagenameController.clear();
           }
         } else {
           _btnController.error();
@@ -111,8 +187,6 @@ class _FabuttonState extends State<Fabutton> {
             },
           );
         }
-        containernameController.clear();
-        imagenameController.clear();
       },
     );
   }

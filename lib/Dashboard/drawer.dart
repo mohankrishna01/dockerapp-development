@@ -1,4 +1,5 @@
 import 'package:docker_app/containers/containerlist.dart';
+import 'package:docker_app/containerstats/containerstats.dart';
 
 import 'package:flutter/material.dart';
 
@@ -30,8 +31,22 @@ class DashboardDrawer extends StatelessWidget {
                     ),
                   );
                 },
-                enableFeedback: true,
                 title: Text("Containers"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContainerStats(
+                        sshclient: sshclient,
+                      ),
+                    ),
+                  );
+                },
+                title: Text("Container(s) stats"),
               ),
             ),
           ],
