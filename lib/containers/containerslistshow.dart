@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:docker_app/Shhlogin/ShhLoginPage.dart';
+import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
+import 'package:docker_app/containers/commit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -134,6 +134,8 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                   child: Text('start'), value: 'start'),
                               PopupMenuItem<String>(
                                   child: Text('remove'), value: 'rm'),
+                              PopupMenuItem<String>(
+                                  child: Text('commit'), value: 'commit'),
                             ],
                             onSelected: (value) async {
                               void _rmcontainer() async {
@@ -185,93 +187,111 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                 }
                               }
 
-                              if (value == "rm") {
-                                showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: TextButton.icon(
-                                      onPressed: null,
-                                      icon: Icon(
-                                        Icons.warning,
-                                        color: Colors.red,
-                                      ),
-                                      label: Text(
-                                        "Warning",
-                                        style: TextStyle(
+                              try {
+                                if (value == "rm") {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: TextButton.icon(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.warning,
                                           color: Colors.red,
                                         ),
-                                      ),
-                                    ),
-                                    content: Text(
-                                      "You are about to delete the ${namelist[index]} containers.Deleted containers will not be recoverable.",
-                                    ),
-                                    actions: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(ctx).pop();
-                                            },
-                                            child: Text("cancal"),
-                                          ),
-                                          SizedBox(
-                                            width: 20.0,
-                                          ),
-                                          RoundedLoadingButton(
-                                            height: 37.5,
-                                            borderRadius: 3.5,
-                                            successColor: Colors.green,
-                                            width: 90.0,
+                                        label: Text(
+                                          "Warning",
+                                          style: TextStyle(
                                             color: Colors.red,
-                                            child: Text(
-                                              'remove',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            controller: _rmcontainerController,
-                                            onPressed: _rmcontainer,
-                                          )
-                                        ],
+                                          ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                try {
+                                      content: Text(
+                                        "You are about to delete the ${namelist[index]} containers.Deleted containers will not be recoverable.",
+                                      ),
+                                      actions: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                              child: Text("cancal"),
+                                            ),
+                                            SizedBox(
+                                              width: 20.0,
+                                            ),
+                                            RoundedLoadingButton(
+                                              height: 37.5,
+                                              borderRadius: 3.5,
+                                              successColor: Colors.green,
+                                              width: 90.0,
+                                              color: Colors.red,
+                                              child: Text(
+                                                'remove',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              controller:
+                                                  _rmcontainerController,
+                                              onPressed: _rmcontainer,
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else if (value == "start") {
                                   await widget.sshclient.execute("docker " +
                                       value.toString() +
                                       "\t" +
                                       namelist[index].replaceAll("\r", ""));
 
                                   _onRefresh();
-                                } catch (e) {
+                                } else if (value == "commit") {
                                   showDialog(
+                                    useRootNavigator: false,
                                     context: context,
                                     builder: (ctx) => AlertDialog(
                                       title: Text(
-                                        "Error",
+                                        "Create a new image",
                                         style: TextStyle(
-                                          color: Colors.red,
+                                          fontSize: 17.0,
                                         ),
-                                        textAlign: TextAlign.center,
                                       ),
-                                      content: Text(
-                                        "Host is down or No internet",
-                                        textAlign: TextAlign.center,
+                                      content: commitpage(
+                                        sshclient: widget.sshclient,
+                                        name: namelist[index],
                                       ),
-                                    ),
-                                  );
-
-                                  await widget.sshclient.connect();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Connected"),
                                     ),
                                   );
                                 }
+                              } catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(
+                                      "Error",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    content: Text(
+                                      "Host is down or No internet",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+
+                                await widget.sshclient.connect();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Connected"),
+                                  ),
+                                );
                               }
                             },
                           )
@@ -279,15 +299,36 @@ class _ContainersListShowState extends State<ContainersListShow> {
                             itemBuilder: (_) => const <PopupMenuItem<String>>[
                               PopupMenuItem<String>(
                                   child: Text('stop'), value: 'stop'),
+                              PopupMenuItem<String>(
+                                  child: Text('commit'), value: 'commit'),
                             ],
                             onSelected: (value) async {
                               try {
-                                var result = await widget.sshclient.execute(
-                                    "docker " +
-                                        value.toString() +
-                                        "\t" +
-                                        namelist[index].replaceAll("\r", ""));
-                                _onRefresh();
+                                if (value == "stop") {
+                                  var result = await widget.sshclient.execute(
+                                      "docker " +
+                                          value.toString() +
+                                          "\t" +
+                                          namelist[index].replaceAll("\r", ""));
+                                  _onRefresh();
+                                } else if (value == "commit") {
+                                  showDialog(
+                                    useRootNavigator: false,
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: Text(
+                                        "Create a new image",
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                        ),
+                                      ),
+                                      content: commitpage(
+                                        sshclient: widget.sshclient,
+                                        name: namelist[index],
+                                      ),
+                                    ),
+                                  );
+                                }
                               } catch (e) {
                                 showDialog(
                                   context: context,
