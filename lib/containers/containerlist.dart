@@ -64,8 +64,9 @@ class ContainerList extends StatelessWidget {
 
     void _deleteall() async {
       try {
-        await sshclient.execute("docker rm -f \$(docker ps -q -a)");
-
+        var result =
+            await sshclient.execute("docker rm -f \$(docker ps -q -a)");
+        print(result.hashCode);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("All containers deleted"),

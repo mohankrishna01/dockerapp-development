@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
 import 'package:docker_app/containers/commit.dart';
+import 'package:docker_app/containers/inspect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -136,6 +137,8 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                   child: Text('remove'), value: 'rm'),
                               PopupMenuItem<String>(
                                   child: Text('commit'), value: 'commit'),
+                              PopupMenuItem<String>(
+                                  child: Text('inspect'), value: 'inspect'),
                             ],
                             onSelected: (value) async {
                               void _rmcontainer() async {
@@ -267,6 +270,16 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                       ),
                                     ),
                                   );
+                                } else if (value == "inspect") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => inspectpage(
+                                        sshclient: widget.sshclient,
+                                        name: namelist[index],
+                                      ),
+                                    ),
+                                  );
                                 }
                               } catch (e) {
                                 showDialog(
@@ -301,6 +314,8 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                   child: Text('stop'), value: 'stop'),
                               PopupMenuItem<String>(
                                   child: Text('commit'), value: 'commit'),
+                              PopupMenuItem<String>(
+                                  child: Text('inspect'), value: 'inspect'),
                             ],
                             onSelected: (value) async {
                               try {
@@ -323,6 +338,16 @@ class _ContainersListShowState extends State<ContainersListShow> {
                                         ),
                                       ),
                                       content: commitpage(
+                                        sshclient: widget.sshclient,
+                                        name: namelist[index],
+                                      ),
+                                    ),
+                                  );
+                                } else if (value == "inspect") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => inspectpage(
                                         sshclient: widget.sshclient,
                                         name: namelist[index],
                                       ),

@@ -33,11 +33,23 @@ class commitpage extends StatelessWidget {
                 ":" +
                 version);
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$imagename image created"),
-              ),
-            );
+            result.hashCode == 1
+                ? ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        "$imagename image not created",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                : ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("$imagename image created"),
+                    ),
+                  );
 
             _createimageController.success();
 
@@ -49,18 +61,29 @@ class commitpage extends StatelessWidget {
               Navigator.of(context).pop();
             });
           } else if (version == null) {
-            await sshclient.execute("docker commit" +
+            var result = await sshclient.execute("docker commit" +
                 "\t" +
                 name.replaceAll("\r", "") +
                 "\t" +
                 imagename);
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$imagename Image created"),
-              ),
-            );
-
+            result.hashCode == 1
+                ? ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        "$imagename image not created",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                : ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("$imagename image created"),
+                    ),
+                  );
             _createimageController.success();
 
             Timer(
