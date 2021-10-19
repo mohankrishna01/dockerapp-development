@@ -56,19 +56,20 @@ class _inspectpageState extends State<inspectpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Inspect"),
-        ),
-        body: ListView(
-          children: [
-            result == null
-                ? Center(
-                    child: Container(
-                        padding: EdgeInsets.only(top: 100.0),
-                        child: Text("No data found")),
-                  )
-                : Text(result)
-          ],
-        ));
+      appBar: AppBar(
+        title: Text("Inspect"),
+      ),
+      body: ListView(
+        children: [
+          result == null
+              ? Center(
+                  child: Container(
+                      padding: EdgeInsets.only(top: 100.0),
+                      child: Text("No data found")),
+                )
+              : Text(result)
+        ],
+      ),
+    );
   }
 }
