@@ -1,5 +1,5 @@
 import 'package:docker_app/containers/containerlist.dart';
-import 'package:docker_app/containerstats/containerstats.dart';
+import 'package:docker_app/images/appbaroption.dart';
 
 import 'package:flutter/material.dart';
 
@@ -31,7 +31,7 @@ class DashboardDrawer extends StatelessWidget {
                     ),
                   );
                 },
-                title: Text("Containers"),
+                title: Text("Container(s)"),
               ),
             ),
             Card(
@@ -40,13 +40,13 @@ class DashboardDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ContainerStats(
+                      builder: (context) => Imagesoption(
                         sshclient: sshclient,
                       ),
                     ),
                   );
                 },
-                title: Text("Container(s) stats"),
+                title: Text("Image(s)"),
               ),
             ),
           ],

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-class inspectpage extends StatefulWidget {
+class Imageinspect extends StatefulWidget {
   var sshclient;
-  var name;
-  inspectpage({this.sshclient, this.name});
+  var imageid;
+  Imageinspect({this.sshclient, this.imageid});
 
   @override
-  State<inspectpage> createState() => _inspectpageState();
+  State<Imageinspect> createState() => _ImageinspectState();
 }
 
-class _inspectpageState extends State<inspectpage> {
+class _ImageinspectState extends State<Imageinspect> {
   var result;
 
   inspect() async {
     try {
-      var inspectresult = await widget.sshclient
-          .execute("docker inspect" + "\t" + widget.name.replaceAll("\r", ""));
+      var inspectresult = await widget.sshclient.execute(
+          "docker image inspect" + "\t" + widget.imageid.replaceAll("\r", ""));
 
       setState(() {
         result = inspectresult;
@@ -57,7 +57,7 @@ class _inspectpageState extends State<inspectpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Inspect"),
+        title: Text("Image Inspect"),
       ),
       body: ListView(
         children: [

@@ -75,8 +75,8 @@ class _logspageState extends State<logspage> {
                     : Text(
                         result,
                         style: TextStyle(
-                          fontSize: 15.0,
-                          wordSpacing: 5.0,
+                          wordSpacing: 2.0,
+                          height: 1.9,
                         ),
                       ),
           ],
