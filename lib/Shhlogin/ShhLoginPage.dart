@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:docker_app/Shhlogin/dockerimage.dart';
-import 'package:docker_app/Shhlogin/headlinetext.dart';
 import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
 import 'package:flutter/material.dart';
 
@@ -30,10 +29,6 @@ class _SshLoginPageState extends State<SshLoginPage> {
           body: ListView(
             children: [
               DockerImage(),
-              SizedBox(
-                height: 20.0,
-              ),
-              HeadlineText(),
               SizedBox(
                 height: 25.0,
               ),

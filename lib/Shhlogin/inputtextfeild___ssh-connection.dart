@@ -202,113 +202,144 @@ class InputTextField extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 350,
-            child: Column(
-              children: [
-                TextFormField(
-                  validator: (namecontroller) {
-                    if (namecontroller!.isEmpty) {
-                      return ('Name is required');
-                    }
-                    return null;
-                  },
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: "Name",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: TextFormField(
+              validator: (namecontroller) {
+                if (namecontroller!.isEmpty) {
+                  return ('Name is required');
+                }
+                return null;
+              },
+              controller: nameController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.028,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
                 ),
-                SizedBox(
-                  height: 16.0,
+                labelText: "Name",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                TextFormField(
-                  validator: (namecontroller) {
-                    if (namecontroller!.isEmpty) {
-                      return ('Host is required');
-                    }
-                    return null;
-                  },
-                  controller: hostController,
-                  decoration: InputDecoration(
-                    labelText: "Host",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                TextFormField(
-                  validator: (namecontroller) {
-                    if (namecontroller!.isEmpty) {
-                      return ('Port is required');
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.number,
-                  controller: portController,
-                  textAlign: TextAlign.right,
-                  decoration: InputDecoration(
-                    labelText: "Port",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                TextFormField(
-                  validator: (namecontroller) {
-                    if (namecontroller!.isEmpty) {
-                      return ('Username is required');
-                    }
-                    return null;
-                  },
-                  controller: userController,
-                  decoration: InputDecoration(
-                    labelText: "Username",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                TextFormField(
-                  validator: (namecontroller) {
-                    if (namecontroller!.isEmpty) {
-                      return ('Password is required');
-                    }
-                    return null;
-                  },
-                  obscureText: true,
-                  controller: pasController,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                    top: 20.0,
-                  ),
-                  child: RoundedLoadingButton(
-                    width: 100.0,
-                    child:
-                        Text('connect', style: TextStyle(color: Colors.white)),
-                    controller: _btnController,
-                    onPressed: _doSomething,
-                  ),
-                ),
-              ],
+              ),
             ),
+          ),
+          SizedBox(
+            height: 22.0,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: TextFormField(
+              validator: (namecontroller) {
+                if (namecontroller!.isEmpty) {
+                  return ('Host is required');
+                }
+                return null;
+              },
+              controller: hostController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.028,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+                labelText: "Host",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 22.0,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: TextFormField(
+              validator: (namecontroller) {
+                if (namecontroller!.isEmpty) {
+                  return ('Port is required');
+                }
+                return null;
+              },
+              keyboardType: TextInputType.number,
+              controller: portController,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.028,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+                labelText: "Port",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 22.0,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: TextFormField(
+              validator: (namecontroller) {
+                if (namecontroller!.isEmpty) {
+                  return ('Username is required');
+                }
+                return null;
+              },
+              controller: userController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.028,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+                labelText: "Username",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 22.0,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: TextFormField(
+              validator: (namecontroller) {
+                if (namecontroller!.isEmpty) {
+                  return ('Password is required');
+                }
+                return null;
+              },
+              obscureText: true,
+              controller: pasController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.028,
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                ),
+                labelText: "Password",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(
+              top: 20.0,
+            ),
+            child: RoundedLoadingButton(
+              width: MediaQuery.of(context).size.width * 0.25,
+              height: MediaQuery.of(context).size.height * 0.07,
+              child: Text('connect', style: TextStyle(color: Colors.white)),
+              controller: _btnController,
+              onPressed: _doSomething,
+            ),
+          ),
+          SizedBox(
+            height: 15.0,
           ),
         ],
       ),

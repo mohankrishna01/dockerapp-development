@@ -32,7 +32,7 @@ class DockerInfoBox extends StatelessWidget {
           child: ListView(
             children: [
               SizedBox(
-                height: 10.0,
+                height: MediaQuery.of(context).size.height * 0.012,
               ),
               ListTile(
                 leading: Icon(Icons.broken_image),

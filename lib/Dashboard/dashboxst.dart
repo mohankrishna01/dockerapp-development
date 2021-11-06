@@ -14,7 +14,7 @@ class DashBoxStopped extends StatelessWidget {
       height: 95.0,
       width: 140.0,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.0), //color: Colors.blue,
+        borderRadius: BorderRadius.circular(15.0),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

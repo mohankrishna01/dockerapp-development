@@ -3,57 +3,71 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class Pullimagepage extends StatelessWidget {
+class Imagetag extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   TextEditingController imagenameController = TextEditingController();
 
+  TextEditingController versionController = TextEditingController();
   var sshclient;
+  var imageid;
+  var imagetag;
+  Imagetag({this.sshclient, this.imageid, this.imagetag});
 
-  Pullimagepage({this.sshclient});
-
-  final RoundedLoadingButtonController _createimageController =
+  final RoundedLoadingButtonController _changeimagenameController =
       RoundedLoadingButtonController();
 
   var imagename;
+  var version;
 
   @override
   Widget build(BuildContext context) {
-    void _createimage() async {
+    void _changeimagename() async {
       if (_formKey.currentState!.validate()) {
         try {
-          var result = await sshclient.execute("docker pull $imagename");
+          var result = await sshclient.execute(
+            "docker tag" + "\t" + imageid.replaceAll("\r", " \t$imagename"),
+          );
 
-          if (result.hashCode == 30082219) {
+          var namecheck = await sshclient.execute(
+              " docker images $imagename  --format '{{json .Repository}}:{{json .Tag}}'");
+          print(imagename.runtimeType);
+          print(namecheck.runtimeType);
+          print(imagename.contains(namecheck.replaceAll("\r", "")));
+
+          if (namecheck
+              .replaceAll("\r", "")
+              .contains(imagename.toLowerCase())) {
+            _changeimagenameController.success();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("$imagename name changed"),
+              ),
+            );
+          } else {
+            _changeimagenameController.error();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red,
-                content: Text("Failed"),
+                content: Text(
+                  "$imagename name change failed",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             );
-            _createimageController.error();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.green,
-                content: Text("Pulled successful"),
-              ),
-            );
-            _createimageController.success();
-            Navigator.pop(context);
           }
-          try {
-            Timer(
-              Duration(seconds: 2),
-              () {
-                try {
-                  _createimageController.reset();
-                } catch (e) {}
-              },
-            );
-          } catch (e) {}
+          Timer(Duration(seconds: 1), () {
+            try {
+              _changeimagenameController.reset();
+            } catch (e) {}
+
+            Navigator.of(context).pop();
+          });
         } catch (e) {
           try {
-            _createimageController.error();
+            _changeimagenameController.error();
             Navigator.of(context).pop();
 
             showDialog(
@@ -82,7 +96,7 @@ class Pullimagepage extends StatelessWidget {
           } catch (e) {}
         }
       } else {
-        _createimageController.error();
+        _changeimagenameController.error();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -100,7 +114,7 @@ class Pullimagepage extends StatelessWidget {
           Duration(seconds: 3),
           () {
             try {
-              _createimageController.reset();
+              _changeimagenameController.reset();
             } catch (e) {}
           },
         );
@@ -111,7 +125,7 @@ class Pullimagepage extends StatelessWidget {
       key: _formKey,
       child: Container(
         width: 200.0,
-        height: 190.0,
+        height: 135.0,
         child: Column(
           children: [
             Container(
@@ -136,37 +150,27 @@ class Pullimagepage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 20.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RoundedLoadingButton(
                   height: 37.5,
-                  borderRadius: 18.0,
+                  borderRadius: 3.5,
                   successColor: Colors.green,
                   width: 90.0,
                   child: Text(
-                    'create',
+                    'change',
                     style: TextStyle(
                       color: Colors.white,
                     ),
                   ),
-                  controller: _createimageController,
-                  onPressed: _createimage,
+                  controller: _changeimagenameController,
+                  onPressed: _changeimagename,
                 )
               ],
-            ),
-            SizedBox(
-              height: 12.0,
-            ),
-            Text(
-              "*Download may take some time (depending upon internet speed). \n so please be patient.",
-              style: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            )
           ],
         ),
       ),

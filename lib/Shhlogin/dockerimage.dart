@@ -5,11 +5,10 @@ class DockerImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top: 20.0),
-      child: Image.network(
-        "https://www.docker.com/sites/default/files/d8/2019-07/vertical-logo-monochromatic.png",
-        height: 120.0,
-        width: 120.0,
+      child: Image.asset(
+        "lib/icons/horizontal-logo-monochromatic-white.png",
+        height: MediaQuery.of(context).size.height * 0.19,
+        width: MediaQuery.of(context).size.height * 0.27,
       ),
     );
   }

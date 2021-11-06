@@ -31,7 +31,7 @@ class _DockerInfoContainerState extends State<DockerInfoContainer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 30.0,
+          height: MediaQuery.of(context).size.height * 0.028,
         ),
         Row(
           children: [

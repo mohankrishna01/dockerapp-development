@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:docker_app/images/history.dart';
 import 'package:docker_app/images/inspect.dart';
+import 'package:docker_app/images/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -26,7 +27,7 @@ class _ImageslistState extends State<Imageslist> {
   var imgcs;
   var imgtag;
 
-  containerlist() async {
+  imagelist() async {
     var imgname;
     var imagecs;
     var imagetag;
@@ -47,9 +48,9 @@ class _ImageslistState extends State<Imageslist> {
       imgtaglist.remove("");
       setState(
         () {
-          imgn = imgname;
-          imgcs = imagecs;
-          imgtag = imgtag;
+          imgname;
+          imagecs;
+          imagetag;
         },
       );
     } catch (e) {
@@ -83,11 +84,11 @@ class _ImageslistState extends State<Imageslist> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
 
-  void _onRefresh() async {
+  void onRefresh() async {
     await Future.delayed(
       Duration(),
       () async {
-        containerlist();
+        imagelist();
       },
     );
 
@@ -95,8 +96,10 @@ class _ImageslistState extends State<Imageslist> {
     _refreshController.refreshCompleted();
   }
 
-  final RoundedLoadingButtonController _rmcontainerController =
+  final RoundedLoadingButtonController _removeimageController =
       RoundedLoadingButtonController();
+
+  void _removeimage(index) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +109,7 @@ class _ImageslistState extends State<Imageslist> {
         enablePullUp: false,
         header: ClassicHeader(),
         controller: _refreshController,
-        onRefresh: _onRefresh,
+        onRefresh: onRefresh,
         child: imgnamelist.isEmpty
             ? Container(
                 padding: EdgeInsets.only(top: 40.0),
@@ -123,43 +126,169 @@ class _ImageslistState extends State<Imageslist> {
                     trailing: PopupMenuButton(
                       itemBuilder: (_) => const <PopupMenuItem<String>>[
                         PopupMenuItem<String>(
-                            child: Text('remove'), value: 'rmi'),
+                          child: Text('history'),
+                          value: 'history',
+                        ),
                         PopupMenuItem<String>(
-                            child: Text('history'), value: 'history'),
+                          child: Text('inspect'),
+                          value: 'inspect',
+                        ),
                         PopupMenuItem<String>(
-                            child: Text('inspect'), value: 'inspect'),
+                          child: Text('remove'),
+                          value: 'rmi',
+                        ),
+                        PopupMenuItem<String>(
+                          child: Text('tag'),
+                          value: 'tag',
+                        ),
                       ],
                       onSelected: (value) async {
                         try {
                           if (value == "rmi") {
-                            var id = await widget.sshclient.execute(
-                                "docker images" +
-                                    "\t" +
-                                    imgnamelist[index].replaceAll("\r", "") +
-                                    "\t" +
-                                    "-q");
-                            var result = await widget.sshclient.execute(
-                                "docker rmi" + "\t" + id.replaceAll("\r", ""));
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: TextButton.icon(
+                                  onPressed: null,
+                                  icon: Icon(
+                                    Icons.warning,
+                                    color: Colors.red,
+                                  ),
+                                  label: Text(
+                                    "Warning",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                                content: Text(
+                                  "You are about to delete the image.\nDeleted image will not be recoverable.\n\nNote: if the image is used by the container you're not able to delete image.",
+                                ),
+                                actions: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                        child: Text("cancal"),
+                                      ),
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      RoundedLoadingButton(
+                                        height: 37.5,
+                                        borderRadius: 3.5,
+                                        successColor: Colors.green,
+                                        width: 90.0,
+                                        color: Colors.red,
+                                        child: Text(
+                                          'remove',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        controller: _removeimageController,
+                                        onPressed: () async {
+                                          try {
+                                            var id = await widget.sshclient
+                                                .execute("docker images" +
+                                                    "\t" +
+                                                    imgnamelist[index]
+                                                        .replaceAll("\r", "") +
+                                                    "\t" +
+                                                    "--format '{{json .Repository}}'");
 
-                            _onRefresh();
-                            var id2 = await widget.sshclient.execute(
-                                "docker images" +
-                                    "\t" +
-                                    imgnamelist[index].replaceAll("\r", "") +
-                                    "\t" +
-                                    "-q");
-                            id == id2
-                                ? ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Image not removed"),
-                                    ),
-                                  )
-                                : ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text("Image removed successfully"),
-                                    ),
-                                  );
+                                            var result =
+                                                await widget.sshclient.execute(
+                                              "docker rmi " +
+                                                  id.replaceAll("\r",
+                                                      ":${imgtaglist[index].replaceAll("\r", "")}"),
+                                            );
+
+                                            onRefresh();
+
+                                            var id2 = await widget.sshclient
+                                                .execute("docker images" +
+                                                    "\t" +
+                                                    imgnamelist[index]
+                                                        .replaceAll("\r", "") +
+                                                    "\t" +
+                                                    "--format '{{json .Repository}}'");
+                                            if (id == id2) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content:
+                                                      Text("Image not removed"),
+                                                ),
+                                              );
+                                              _removeimageController.error();
+                                              Timer(Duration(seconds: 2), () {
+                                                try {
+                                                  _removeimageController
+                                                      .reset();
+                                                } catch (e) {}
+                                              });
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "Image removed successfully"),
+                                                ),
+                                              );
+                                              _removeimageController.success();
+                                              Timer(
+                                                  Duration(milliseconds: 1000),
+                                                  () {
+                                                try {
+                                                  _removeimageController
+                                                      .reset();
+                                                } catch (e) {}
+
+                                                Navigator.of(context).pop();
+                                              });
+                                            }
+                                          } catch (e) {
+                                            try {
+                                              _removeimageController.error();
+                                              Navigator.of(context).pop();
+
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: Text(
+                                                    "Error",
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  content: Text(
+                                                    "Host is down or No internet",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              );
+
+                                              await widget.sshclient.connect();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text("Connected"),
+                                                ),
+                                              );
+                                            } catch (e) {}
+                                          }
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
                           } else if (value == "history") {
                             var id = await widget.sshclient.execute(
                                 "docker images" +
@@ -189,6 +318,31 @@ class _ImageslistState extends State<Imageslist> {
                                 builder: (context) => Imageinspect(
                                   sshclient: widget.sshclient,
                                   imageid: id,
+                                ),
+                              ),
+                            );
+                          } else if (value == "tag") {
+                            var id = await widget.sshclient.execute(
+                                "docker images" +
+                                    "\t" +
+                                    imgnamelist[index].replaceAll("\r", "") +
+                                    "\t" +
+                                    "-q");
+
+                            showDialog(
+                              useRootNavigator: false,
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text(
+                                  "Change image name",
+                                  style: TextStyle(
+                                    fontSize: 17.0,
+                                  ),
+                                ),
+                                content: Imagetag(
+                                  sshclient: widget.sshclient,
+                                  imageid: id,
+                                  imagetag: imgtaglist[index],
                                 ),
                               ),
                             );

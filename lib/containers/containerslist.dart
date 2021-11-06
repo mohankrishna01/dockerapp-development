@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:docker_app/Shhlogin/inputtextfeild___ssh-connection.dart';
 import 'package:docker_app/containers/commit.dart';
 import 'package:docker_app/containers/inspect.dart';
 import 'package:docker_app/containers/logs.dart';
@@ -100,10 +99,6 @@ class _ContainersListShowState extends State<ContainersListShow> {
 
   final RoundedLoadingButtonController _rmcontainerController =
       RoundedLoadingButtonController();
-  void initState() {
-    super.initState();
-    _onRefresh();
-  }
 
   @override
   Widget build(BuildContext context) {

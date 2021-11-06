@@ -73,6 +73,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - lib/icons/horizontal-logo-monochromatic-white.png
+
 fonts:
   - family: cabin
     fonts:

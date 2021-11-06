@@ -4,6 +4,7 @@ import 'package:docker_app/Dashboard/drawer.dart';
 import 'package:docker_app/Shhlogin/ShhLoginPage.dart';
 import 'package:docker_app/floatingactionbutton/fab.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'Dockerinfo-container.dart';
 
@@ -145,6 +146,14 @@ class _DashboardUiState extends State<DashboardUi> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
@@ -175,7 +184,10 @@ class _DashboardUiState extends State<DashboardUi> {
           ],
           title: Text(
             "Dashboard",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18.0,
+            ),
           ),
           centerTitle: true,
         ),
@@ -213,12 +225,12 @@ class _DashboardUiState extends State<DashboardUi> {
                 stoppedcontainers: stresult,
               ),
               SizedBox(
-                height: 18.0,
+                height: MediaQuery.of(context).size.height * 0.023,
               ),
               Center(
                 child: Container(
-                  height: 30.0,
-                  width: 150.0,
+                  height: MediaQuery.of(context).size.height * 0.055,
+                  width: MediaQuery.of(context).size.width * 0.3,
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20.0),
@@ -227,7 +239,7 @@ class _DashboardUiState extends State<DashboardUi> {
                     child: Text(
                       "Docker Info",
                       style: TextStyle(
-                        fontSize: 17.0,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),

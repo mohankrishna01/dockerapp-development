@@ -7,6 +7,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class Imagesoption extends StatelessWidget {
   var sshclient;
+
   Imagesoption({this.sshclient});
 
   @override
@@ -69,6 +70,7 @@ class Imagesoption extends StatelessWidget {
           "Image(s) List",
           style: TextStyle(
             color: Colors.black,
+            fontSize: 18.0,
           ),
         ),
         backgroundColor: Colors.white,
@@ -78,9 +80,9 @@ class Imagesoption extends StatelessWidget {
           Center(
             child: Container(
               margin: EdgeInsets.only(
-                top: 5.0,
+                top: MediaQuery.of(context).size.height * 0.01,
               ),
-              height: 50.0,
+              height: MediaQuery.of(context).size.height * 0.075,
               width: MediaQuery.of(context).size.width * 0.95,
               decoration: BoxDecoration(
                 color: Colors.lightBlue,
@@ -90,7 +92,7 @@ class Imagesoption extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    iconSize: 30.0,
+                    iconSize: 25.0,
                     icon: Icon(
                       Icons.add,
                     ),
@@ -113,7 +115,7 @@ class Imagesoption extends StatelessWidget {
                     },
                   ),
                   IconButton(
-                    iconSize: 28.0,
+                    iconSize: 23.0,
                     icon: Icon(Icons.delete_forever),
                     color: Colors.white,
                     onPressed: () async {
@@ -147,13 +149,16 @@ class Imagesoption extends StatelessWidget {
                                   child: Text("cancal"),
                                 ),
                                 SizedBox(
-                                  width: 20.0,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.06,
                                 ),
                                 RoundedLoadingButton(
-                                  height: 37.5,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.061,
                                   borderRadius: 3.5,
                                   successColor: Colors.green,
-                                  width: 90.0,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.23,
                                   color: Colors.red,
                                   child: Text(
                                     'remove',

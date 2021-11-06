@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -212,120 +213,140 @@ class _FabuttonState extends State<Fabutton> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Create New Container"),
-        actions: [
-          IconButton(
-            iconSize: 28.0,
-            onPressed: () {
-              setState(() {
-                isloading = true;
-              });
-              networkvalue();
-
-              setState(() {
-                isloading = false;
-              });
-            },
-            icon: Icon(Icons.refresh_outlined),
+    return Container(
+      height: 800.0,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Create Container",
+            style: TextStyle(
+              fontSize: 18.0,
+            ),
           ),
-        ],
-      ),
-      body: LoadingOverlay(
-        isLoading: isloading,
-        child: Form(
-          key: _formKey,
-          child: Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 10.0),
-              width: 350.0,
-              child: ListView(
-                children: [
-                  TextField(
-                    controller: containernameController,
-                    onChanged: (value) {
-                      containername = value;
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Name",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  TextFormField(
-                    validator: (namecontroller) {
-                      if (namecontroller!.isEmpty) {
-                        return ('Image name is required');
-                      }
-                      return null;
-                    },
-                    controller: imagenameController,
-                    onChanged: (value) {
-                      imagename = value;
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Image name",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: "Network",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    value: dropdownValue,
-                    icon: const Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
+          actions: [
+            IconButton(
+              iconSize: 25.0,
+              onPressed: () {
+                setState(() {
+                  isloading = true;
+                });
+                networkvalue();
 
-                      print(dropdownValue);
-                    },
-                    items: result.map<DropdownMenuItem<String>>(
-                      (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
+                setState(() {
+                  isloading = false;
+                });
+              },
+              icon: Icon(Icons.refresh_outlined),
+            ),
+          ],
+        ),
+        body: LoadingOverlay(
+          isLoading: isloading,
+          child: Form(
+            key: _formKey,
+            child: Center(
+              child: Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.035),
+                width: MediaQuery.of(context).size.width * 0.88,
+                child: ListView(
+                  children: [
+                    TextField(
+                      controller: containernameController,
+                      onChanged: (value) {
+                        containername = value;
                       },
-                    ).toList(),
-                  ),
-                  SizedBox(
-                    height: 13.0,
-                  ),
-                  Container(
-                    child: RoundedLoadingButton(
-                      successColor: Colors.green,
-                      height: 45.0,
-                      width: 98.0,
-                      child: Text(
-                        'create',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.5,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.028,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                        labelText: "Name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      controller: _btnController,
-                      onPressed: _doSomething,
                     ),
-                  )
-                ],
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextFormField(
+                      validator: (namecontroller) {
+                        if (namecontroller!.isEmpty) {
+                          return ('Image name is required');
+                        }
+                        return null;
+                      },
+                      controller: imagenameController,
+                      onChanged: (value) {
+                        imagename = value;
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.028,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                        labelText: "Image name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.025,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                        labelText: "Network",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      value: dropdownValue,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+
+                        print(dropdownValue);
+                      },
+                      items: result.map<DropdownMenuItem<String>>(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                    SizedBox(
+                      height: 13.0,
+                    ),
+                    Container(
+                      child: RoundedLoadingButton(
+                        successColor: Colors.green,
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        child: Text(
+                          'create',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        controller: _btnController,
+                        onPressed: _doSomething,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
