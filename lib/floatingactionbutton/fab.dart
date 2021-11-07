@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -35,13 +34,13 @@ class _FabuttonState extends State<Fabutton> {
 
           if (containername == null) {
             try {
-              if (dropdownValue == null) {
+              if (networkdropdownValue == null) {
                 String raw = "docker run -dit --network  default $imagename";
                 String unRaw = raw.replaceAll('\r', '');
                 conresult = await widget.sshclient.execute(unRaw);
-              } else if (dropdownValue != null) {
+              } else if (networkdropdownValue != null) {
                 String raw =
-                    "docker run -dit --network  $dropdownValue $imagename";
+                    "docker run -dit --network  $networkdropdownValue $imagename";
                 String unRaw = raw.replaceAll('\r', '');
                 conresult = await widget.sshclient.execute(unRaw);
               }
@@ -82,14 +81,14 @@ class _FabuttonState extends State<Fabutton> {
             }
           } else if (containername != null) {
             try {
-              if (dropdownValue == null) {
+              if (networkdropdownValue == null) {
                 String raw =
                     "docker run -dit --name $containername --network  default $imagename";
                 String unRaw = raw.replaceAll('\r', '');
                 conresult = await widget.sshclient.execute(unRaw);
-              } else if (dropdownValue != null) {
+              } else if (networkdropdownValue != null) {
                 String raw =
-                    "docker run -dit --name $containername --network  $dropdownValue $imagename";
+                    "docker run -dit --name $containername --network  $networkdropdownValue $imagename";
                 String unRaw = raw.replaceAll('\r', '');
                 conresult = await widget.sshclient.execute(unRaw);
               }
@@ -192,22 +191,30 @@ class _FabuttonState extends State<Fabutton> {
     );
   }
 
-  var dropdownValue;
-  List<String> result = [];
+  var networkdropdownValue;
+  var containerlist;
+  var conlistvalue;
+  var netlistvalue;
+
+  List<String> networkresult = [];
+
+  List<String> conlistresult = [];
+
   var cgroupdriver;
+
   networkvalue() async {
     cgroupdriver = await widget.sshclient
         .execute("docker network list --format '{{.Name}}'");
-    result = cgroupdriver.split("\n");
-    result.remove("");
-
+    networkresult = cgroupdriver.split("\n");
+    networkresult.remove("");
     setState(() {
-      result;
+      netlistvalue = networkresult;
     });
   }
 
   void initState() {
     super.initState();
+
     networkvalue();
   }
 
@@ -306,19 +313,19 @@ class _FabuttonState extends State<Fabutton> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      value: dropdownValue,
+                      value: networkdropdownValue,
                       icon: const Icon(Icons.arrow_downward),
                       iconSize: 24,
                       elevation: 16,
                       style: const TextStyle(color: Colors.deepPurple),
                       onChanged: (String? newValue) {
                         setState(() {
-                          dropdownValue = newValue!;
+                          networkdropdownValue = newValue!;
                         });
 
-                        print(dropdownValue);
+                        print(networkdropdownValue);
                       },
-                      items: result.map<DropdownMenuItem<String>>(
+                      items: networkresult.map<DropdownMenuItem<String>>(
                         (String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -326,6 +333,9 @@ class _FabuttonState extends State<Fabutton> {
                           );
                         },
                       ).toList(),
+                    ),
+                    SizedBox(
+                      height: 13.0,
                     ),
                     SizedBox(
                       height: 13.0,

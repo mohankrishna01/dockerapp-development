@@ -21,36 +21,27 @@ class _ImageslistState extends State<Imageslist> {
   List<String> imgnamelist = [];
 
   List<String> imagecslist = [];
-  List<String> imgtaglist = [];
-
-  var imgn;
-  var imgcs;
-  var imgtag;
 
   imagelist() async {
     var imgname;
     var imagecs;
-    var imagetag;
+
     try {
       imgname = await widget.sshclient
-          .execute("docker images  --format '{{.Repository}}'");
+          .execute("docker images  --format '{{.Repository}}:{{.Tag}}'");
       imgnamelist = imgname.split("\n");
 
       imgnamelist.remove("");
 
       imagecs = await widget.sshclient
-          .execute("docker images  --format '{{.CreatedSince}}'");
+          .execute("docker images --format '{{.CreatedSince}}'");
       imagecslist = imagecs.split("\n");
       imagecslist.remove("");
-      imagetag =
-          await widget.sshclient.execute("docker images  --format '{{.Tag}}'");
-      imgtaglist = imagetag.split("\n");
-      imgtaglist.remove("");
+
       setState(
         () {
           imgname;
           imagecs;
-          imagetag;
         },
       );
     } catch (e) {
@@ -192,31 +183,12 @@ class _ImageslistState extends State<Imageslist> {
                                         controller: _removeimageController,
                                         onPressed: () async {
                                           try {
-                                            var id = await widget.sshclient
-                                                .execute("docker images" +
-                                                    "\t" +
-                                                    imgnamelist[index]
-                                                        .replaceAll("\r", "") +
-                                                    "\t" +
-                                                    "--format '{{json .Repository}}'");
-
-                                            var result =
-                                                await widget.sshclient.execute(
-                                              "docker rmi " +
-                                                  id.replaceAll("\r",
-                                                      ":${imgtaglist[index].replaceAll("\r", "")}"),
-                                            );
-
+                                            var remove = await widget.sshclient
+                                                .execute(
+                                                    "docker rmi ${imgnamelist[index].replaceAll("\r", "")}");
                                             onRefresh();
 
-                                            var id2 = await widget.sshclient
-                                                .execute("docker images" +
-                                                    "\t" +
-                                                    imgnamelist[index]
-                                                        .replaceAll("\r", "") +
-                                                    "\t" +
-                                                    "--format '{{json .Repository}}'");
-                                            if (id == id2) {
+                                            if (remove.hashCode == 1) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
@@ -225,10 +197,13 @@ class _ImageslistState extends State<Imageslist> {
                                                 ),
                                               );
                                               _removeimageController.error();
-                                              Timer(Duration(seconds: 2), () {
+                                              Timer(
+                                                  Duration(milliseconds: 1300),
+                                                  () {
                                                 try {
                                                   _removeimageController
                                                       .reset();
+                                                  Navigator.of(context).pop();
                                                 } catch (e) {}
                                               });
                                             } else {
@@ -322,13 +297,6 @@ class _ImageslistState extends State<Imageslist> {
                               ),
                             );
                           } else if (value == "tag") {
-                            var id = await widget.sshclient.execute(
-                                "docker images" +
-                                    "\t" +
-                                    imgnamelist[index].replaceAll("\r", "") +
-                                    "\t" +
-                                    "-q");
-
                             showDialog(
                               useRootNavigator: false,
                               context: context,
@@ -341,8 +309,7 @@ class _ImageslistState extends State<Imageslist> {
                                 ),
                                 content: Imagetag(
                                   sshclient: widget.sshclient,
-                                  imageid: id,
-                                  imagetag: imgtaglist[index],
+                                  imagenameid: imgnamelist[index],
                                 ),
                               ),
                             );
@@ -387,7 +354,7 @@ class _ImageslistState extends State<Imageslist> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(imgtaglist[index]),
+                          Text(""),
                           SizedBox(
                             height: 15.0,
                           ),

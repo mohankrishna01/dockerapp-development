@@ -9,9 +9,9 @@ class Imagetag extends StatelessWidget {
 
   TextEditingController versionController = TextEditingController();
   var sshclient;
-  var imageid;
-  var imagetag;
-  Imagetag({this.sshclient, this.imageid, this.imagetag});
+  var imagenameid;
+
+  Imagetag({this.sshclient, this.imagenameid});
 
   final RoundedLoadingButtonController _changeimagenameController =
       RoundedLoadingButtonController();
@@ -24,40 +24,9 @@ class Imagetag extends StatelessWidget {
     void _changeimagename() async {
       if (_formKey.currentState!.validate()) {
         try {
-          var result = await sshclient.execute(
-            "docker tag" + "\t" + imageid.replaceAll("\r", " \t$imagename"),
-          );
+          var tag = await sshclient.execute(
+              "docker tag ${imagenameid.replaceAll("\r", "")} $imagename");
 
-          var namecheck = await sshclient.execute(
-              " docker images $imagename  --format '{{json .Repository}}:{{json .Tag}}'");
-          print(imagename.runtimeType);
-          print(namecheck.runtimeType);
-          print(imagename.contains(namecheck.replaceAll("\r", "")));
-
-          if (namecheck
-              .replaceAll("\r", "")
-              .contains(imagename.toLowerCase())) {
-            _changeimagenameController.success();
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$imagename name changed"),
-              ),
-            );
-          } else {
-            _changeimagenameController.error();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.red,
-                content: Text(
-                  "$imagename name change failed",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-          }
           Timer(Duration(seconds: 1), () {
             try {
               _changeimagenameController.reset();
